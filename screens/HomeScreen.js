@@ -108,11 +108,11 @@ export default function HomeScreen({ navigation }) {
                     )}
                 />
             </ScrollView>
-            <View style={styles.bottomView} >
-                <TouchableOpacity onPress={() => { navigation.push('New Event') }}>
-                <Text style={styles.textStyle}>Create Event</Text>
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress={() => { navigation.push('New Event') }}>
+                <View style={styles.bottomView} >
+                    <Text style={styles.textStyle}>Create Event</Text>
+                </View>
+            </TouchableOpacity>
         </View>
     );
 }

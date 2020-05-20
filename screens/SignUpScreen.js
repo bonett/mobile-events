@@ -17,7 +17,7 @@ export default function SignUpScreen({ navigation }) {
       <TextInput placeholder='Country' style={styles.inputText} />
       <TextInput placeholder='Username' style={styles.inputText} />
       <TextInput placeholder='Password' style={styles.inputText} />
-      <TouchableOpacity onPress={() => {/* do this */ }}>
+      <TouchableOpacity onPress={() => { navigation.push('Login') }}>
         <View style={styles.customButton}>
           <Text style={styles.customButtonText}>Continue</Text>
         </View>
