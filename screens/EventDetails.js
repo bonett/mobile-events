@@ -2,14 +2,17 @@ import * as React from 'react';
 import { StyleSheet, Text, ScrollView, View, Image, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
-export default function EventDetailsScreen({ navigation }) {
+export default function EventDetailsScreen({ route, navigation }) {
+
+    const { event } = route.params;
+
     return (
         <>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                <Text style={styles.title}>Android Meet</Text>
-                <Text style={styles.description}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</Text>
+                <Text style={styles.title}>{event.title}</Text>
+                <Text style={styles.description}>{event.description}</Text>
                 <View style={styles.media}>
-                    <Image source={{ uri: 'https://www.kindpng.com/picc/m/73-737324_abstract-submission-nutrition-congress-circle-meeting-icon-png.png' }} style={styles.itemPicture} />
+                    <Image source={{ uri: event.picture }} style={styles.itemPicture} />
                 </View>
             </ScrollView>
             <View style={styles.footer}>
@@ -84,5 +87,5 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontWeight: '400',
         textTransform: "uppercase"
-      },
+    },
 });
