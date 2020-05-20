@@ -2,11 +2,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as React from 'react';
 
 import TabBarIcon from '../components/TabBarIcon';
-import SignInScreen from '../screens/SignInScreen';
-import SignUpScreen from '../screens/SignUpScreen';
+import HomeScreen from '../screens/HomeScreen';
+import AccountScreen from '../screens/AccountScreen';
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = 'Login';
+const INITIAL_ROUTE_NAME = 'Dashboard';
 
 export default function BottomTabNavigator({ navigation, route }) {
 
@@ -15,18 +15,18 @@ export default function BottomTabNavigator({ navigation, route }) {
   return (
     <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
       <BottomTab.Screen
-        name="Login"
-        component={SignInScreen}
+        name="Dashboard"
+        component={HomeScreen}
         options={{
-          title: 'I have Account',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-star" />,
+          title: 'Dashboard',
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-home" />,
         }}
       />
       <BottomTab.Screen
-        name="Register"
-        component={SignUpScreen}
+        name="Account"
+        component={AccountScreen}
         options={{
-          title: `Don't have account?`,
+          title: 'Account',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-person" />,
         }}
       />
@@ -38,9 +38,9 @@ function getHeaderTitle(route) {
   const routeName = route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
 
   switch (routeName) {
-    case 'Login':
-      return 'Sign in';
-    case 'Register':
-      return 'Sign up';
+    case 'Dashboard':
+      return 'Home Events';
+    case 'Account':
+      return 'My Account';
   }
 }

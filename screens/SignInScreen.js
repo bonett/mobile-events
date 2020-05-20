@@ -1,9 +1,8 @@
-import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
 
 
-export default function SignInScreen() {
+export default function SignInScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -17,11 +16,16 @@ export default function SignInScreen() {
                 </Text>
         <TextInput placeholder='Email' style={styles.inputText} />
         <TextInput placeholder='Password' style={styles.inputText} />
-        <View style={{ margin: 7 }} />
-        <TouchableOpacity onPress={() => {/* do this */ }}>
+        <TouchableOpacity onPress={() => { navigation.navigate('Dashboard') }}>
           <View style={styles.customButton}
           >
             <Text style={styles.customButtonText}>Continue</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => { navigation.navigate('Register') }}>
+          <View style={styles.customLink}
+          >
+            <Text style={styles.customLinkText}>Don't have account</Text>
           </View>
         </TouchableOpacity>
       </ScrollView>
@@ -78,5 +82,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
     color: "#fff",
+  },
+  customLink: {
+    height: 48,
+    marginVertical: 8,
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontWeight: "600"
+  },
+  customLinkText: {
+    fontSize: 14,
+    fontWeight: '300',
+    color: "#2433AC",
   },
 });

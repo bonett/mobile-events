@@ -1,14 +1,14 @@
 import * as Linking from 'expo-linking';
 
 export default {
-  prefixes: [Linking.makeUrl('/')],
+  prefixes: [Linking.makeUrl('/dashboard')],
   config: {
     Root: {
       path: 'root',
       screens: {
-        Home: 'sign in',
-        Links: 'sign up',
+        Home: 'dashbaord',
+        Account: 'account',
       },
-    },
+    }
   },
 };

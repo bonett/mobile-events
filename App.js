@@ -5,9 +5,11 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 
 import useCachedResources from './hooks/useCachedResources';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
-import LinkingConfiguration from './navigation/LinkingConfiguration';
+import SignInScreen from './screens/SignInScreen';
+import SignUpScreen from './screens/SignUpScreen';
 
 const Stack = createStackNavigator();
+const INITIAL_ROUTE_NAME = 'Login';
 
 export default function App(props) {
   const isLoadingComplete = useCachedResources();
@@ -16,16 +18,13 @@ export default function App(props) {
     return null;
   } else {
     return (
-      <View style={styles.container}>
-        {
-          Platform.OS === 'ios' && <StatusBar barStyle="dark-content" />
-        }
-        <NavigationContainer linking={LinkingConfiguration}>
-          <Stack.Navigator>
-            <Stack.Screen name="Root" component={BottomTabNavigator} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </View>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
+          <Stack.Screen name="Login" component={SignInScreen} />
+          <Stack.Screen name="Register" component={SignUpScreen} />
+          <Stack.Screen name="Dashboard" component={BottomTabNavigator} />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 }
