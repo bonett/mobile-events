@@ -18,14 +18,12 @@ export default function SignUpScreen({ navigation }) {
       <TextInput placeholder='Username' style={styles.inputText} />
       <TextInput placeholder='Password' style={styles.inputText} />
       <TouchableOpacity onPress={() => {/* do this */ }}>
-        <View style={styles.customButton}
-        >
+        <View style={styles.customButton}>
           <Text style={styles.customButtonText}>Continue</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => { navigation.navigate('Login') }}>
-        <View style={styles.customLink}
-        >
+      <TouchableOpacity onPress={() => { navigation.push('Login') }}>
+        <View style={styles.customLink}>
           <Text style={styles.customLinkText}>I have an account</Text>
         </View>
       </TouchableOpacity>
@@ -78,6 +76,7 @@ const styles = StyleSheet.create({
   customButtonText: {
     fontSize: 18,
     fontWeight: '400',
+    textTransform: "uppercase",
     color: "#fff",
   },
   customLink: {

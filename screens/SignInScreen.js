@@ -1,30 +1,22 @@
 import * as React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 
 
 export default function SignInScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <Text
-          style={styles.headingText}>
-          Welcome back,
-                </Text>
-        <Text
-          style={styles.descriptionText}>
-          Sign in to continue
-                </Text>
+        <Text style={styles.headingText}> Welcome back, </Text>
+        <Text style={styles.descriptionText}> Sign in to continue </Text>
         <TextInput placeholder='Email' style={styles.inputText} />
         <TextInput placeholder='Password' style={styles.inputText} />
-        <TouchableOpacity onPress={() => { navigation.navigate('Dashboard') }}>
-          <View style={styles.customButton}
-          >
+        <TouchableOpacity onPress={() => { navigation.push('Dashboard') }}>
+          <View style={styles.customButton}>
             <Text style={styles.customButtonText}>Continue</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => { navigation.navigate('Register') }}>
-          <View style={styles.customLink}
-          >
+        <TouchableOpacity onPress={() => { navigation.push('Register') }}>
+          <View style={styles.customLink}>
             <Text style={styles.customLinkText}>Don't have account</Text>
           </View>
         </TouchableOpacity>
@@ -77,8 +69,9 @@ const styles = StyleSheet.create({
   },
   customButtonText: {
     fontSize: 18,
-    fontWeight: '400',
     color: "#fff",
+    fontWeight: '400',
+    textTransform: "uppercase"
   },
   customLink: {
     height: 48,

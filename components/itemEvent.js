@@ -7,14 +7,12 @@ const ItemEvent = (props) => {
     const { event } = props;
 
     return (
-        <TouchableOpacity onPress={() => { navigation.navigate('Details') }} style={styles.itemContent}>
-            <View>
-                <View style={styles.itemCard}>
-                    <Image source={{ uri: event.picture }} style={styles.itemPicture} />
-                    <Text style={styles.text}>{event.title}</Text>
-                </View>
+        <View style={styles.itemContent}>
+            <View style={styles.itemCard}>
+                <Image source={{ uri: event.picture }} style={styles.itemPicture} />
+                <Text style={styles.text}>{event.title}</Text>
             </View>
-        </TouchableOpacity>
+        </View>
     )
 }
 
@@ -22,6 +20,7 @@ export default ItemEvent
 
 const styles = StyleSheet.create({
     itemContent: {
+        backgroundColor: "#fff",
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',

@@ -101,16 +101,17 @@ export default function HomeScreen({ navigation }) {
                 <FlatList
                     data={eventList}
                     numColumns={2}
-                    keyExtractor={(index) => index}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => { navigation.navigate('Detail') }} style={styles.itemContent}>
-                            <ItemEvent event={item} />
+                    renderItem={({ item, index }) => (
+                        <TouchableOpacity onPress={() => { navigation.push('Detail') }} style={styles.itemContent}>
+                            <ItemEvent event={item} key={index} />
                         </TouchableOpacity>
                     )}
                 />
             </ScrollView>
             <View style={styles.bottomView} >
+                <TouchableOpacity onPress={() => { navigation.push('New Event') }}>
                 <Text style={styles.textStyle}>Create Event</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -122,8 +123,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     contentContainer: {
-        paddingVertical: 80,
+        paddingVertical: 10,
         width: wp('98%'),
+        backgroundColor: '#F9F9F9'
     },
     bottomView: {
         width: '100%',
@@ -137,6 +139,7 @@ const styles = StyleSheet.create({
     textStyle: {
         color: '#fff',
         fontSize: 18,
-        fontWeight: '300'
+        fontWeight: '400',
+        textTransform: "uppercase"
     }
 });

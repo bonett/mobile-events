@@ -2,9 +2,9 @@ import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 
-export default function EventDetailsScreen({ navigation }) {
+export default function NewEventScreen({ navigation }) {
     return (
-        <Text>Details</Text>
+        <Text>NewEventScreen</Text>
     );
 }
 
