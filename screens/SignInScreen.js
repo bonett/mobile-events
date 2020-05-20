@@ -1,14 +1,29 @@
 import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 
-import { ScrollView } from 'react-native-gesture-handler';
 
 export default function SignInScreen() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-       
+        <Text
+          style={styles.headingText}>
+          Welcome back,
+                </Text>
+        <Text
+          style={styles.descriptionText}>
+          Sign in to continue
+                </Text>
+        <TextInput placeholder='Email' style={styles.inputText} />
+        <TextInput placeholder='Password' style={styles.inputText} />
+        <View style={{ margin: 7 }} />
+        <TouchableOpacity onPress={() => {/* do this */ }}>
+          <View style={styles.customButton}
+          >
+            <Text style={styles.customButtonText}>Continue</Text>
+          </View>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -24,74 +39,44 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
-    paddingTop: 30,
+    flex: 1,
+    paddingTop: 40,
+    paddingStart: 20,
+    paddingEnd: 20,
   },
-  welcomeContainer: {
+  headingText: {
+    fontSize: 22,
+    fontWeight: "300"
+  },
+  descriptionText: {
+    fontSize: 30,
+    fontWeight: "200",
+    paddingBottom: 10
+  },
+  inputText: {
+    height: 48,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: "#ededed",
+    borderRadius: 4,
+    color: "#20232a",
+    fontSize: 20,
+    fontWeight: "300",
+    paddingStart: 8,
+    paddingEnd: 8,
+  },
+  customButton: {
+    backgroundColor: "#2433AC",
+    height: 48,
+    marginVertical: 8,
+    borderRadius: 4,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+    fontWeight: "600"
   },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
+  customButtonText: {
+    fontSize: 18,
+    fontWeight: '400',
+    color: "#fff",
   },
 });
