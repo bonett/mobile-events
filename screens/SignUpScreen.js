@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 
-export default function SignUpScreen() {
+export default function SignUpScreen({ navigation }) {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <Text
@@ -23,6 +23,12 @@ export default function SignUpScreen() {
           <Text style={styles.customButtonText}>Continue</Text>
         </View>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => { navigation.navigate('Login') }}>
+        <View style={styles.customLink}
+        >
+          <Text style={styles.customLinkText}>I have an account</Text>
+        </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -31,6 +37,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fafafa',
+    paddingVertical: 40
   },
   contentContainer: {
     flex: 1,
@@ -39,13 +46,13 @@ const styles = StyleSheet.create({
     paddingEnd: 20,
   },
   headingText: {
-    fontSize: 22,
-    fontWeight: "300"
+    fontSize: 30,
+    fontWeight: "400"
   },
   descriptionText: {
-    fontSize: 30,
+    fontSize: 36,
     fontWeight: "200",
-    paddingBottom: 10
+    paddingVertical: 10
   },
   inputText: {
     height: 48,
@@ -72,5 +79,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
     color: "#fff",
+  },
+  customLink: {
+    height: 48,
+    marginVertical: 8,
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontWeight: "600"
+  },
+  customLinkText: {
+    fontSize: 14,
+    fontWeight: '300',
+    color: "#2433AC",
   },
 });

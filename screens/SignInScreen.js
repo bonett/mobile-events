@@ -33,14 +33,11 @@ export default function SignInScreen({ navigation }) {
   );
 }
 
-SignInScreen.navigationOptions = {
-  header: null,
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingVertical: 40
   },
   contentContainer: {
     flex: 1,
@@ -49,13 +46,13 @@ const styles = StyleSheet.create({
     paddingEnd: 20,
   },
   headingText: {
-    fontSize: 22,
-    fontWeight: "300"
+    fontSize: 30,
+    fontWeight: "400"
   },
   descriptionText: {
-    fontSize: 30,
+    fontSize: 36,
     fontWeight: "200",
-    paddingBottom: 10
+    paddingVertical: 10
   },
   inputText: {
     height: 48,
