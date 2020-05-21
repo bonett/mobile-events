@@ -40,14 +40,14 @@ export default function EventDetailsScreen({ route, navigation }) {
                             </View>
                             <View style={styles.mapContainer}>
                                 <MapView style={styles.map} initialRegion={{ latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude), latitudeDelta: parseFloat(event.latitude_delta), longitudeDelta: parseFloat(event.longitude_delta) }}>
-                                    <Marker coordinate={{latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude)}} title={event.title}/>
+                                    <Marker coordinate={{ latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude) }} title={event.title} />
                                 </MapView>
                             </View>
                         </ScrollView>
                         {
                             value === event.id_user ?
                                 <View style={styles.footer}>
-                                    <TouchableOpacity onPress={() => { navigation.navigate('Home Events')}}>
+                                    <TouchableOpacity onPress={() => { navigation.navigate('Home Events') }}>
                                         <View style={styles.button} >
                                             <Text style={styles.customButtonText}>Edit Event</Text>
                                         </View>

@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingStart: 20,
         paddingEnd: 20,
-        paddingBottom: 60
     },
     attach: {
         paddingBottom: 20,
@@ -171,8 +170,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     avatar: {
-        width: 160,
-        height: 160,
+        width: 100,
+        height: 100,
         borderRadius: 80
     },
     headingText: {
@@ -186,7 +185,7 @@ const styles = StyleSheet.create({
     },
     mapContainer: {
         marginVertical: 20,
-        height: 200
+        height: 200,
     },
     map: {
         height: 200
