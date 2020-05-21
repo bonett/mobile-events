@@ -3,9 +3,9 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 
 
 export default function SignUpScreen({ navigation }) {
 
-  const [username, onChangeUserName] = React.useState('wbonett10');
-  const [email, onChangeEmail] = React.useState('wilfrido@gmail.com');
-  const [password, onChangePassword] = React.useState('123456');
+  const [username, onChangeUserName] = React.useState('');
+  const [email, onChangeEmail] = React.useState('');
+  const [password, onChangePassword] = React.useState('');
 
   const registerUser = () => {
 

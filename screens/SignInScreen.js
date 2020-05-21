@@ -7,33 +7,40 @@ export default function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('wilfrido@gmail.com');
   const [password, onChangePassword] = useState('123456');
 
-  const loginUser = async () => {
+  const loginUser = () => {
 
     const payload = {
       email: email,
       password: password
     };
 
-    const token = await AsyncStorage.getItem('TOKEN') || 'none';
-
     fetch(`http://localhost:8080/auth/login`, {
       method: "POST",
       body: JSON.stringify(payload),
       headers: new Headers({
-        'Content-Type': 'application/json',
-        'access-token': token
+        'Content-Type': 'application/json'
       })
     })
       .then(res => res.json())
       .then(response => {
-          if (response.isAuthenticated) {
-            navigation.push('Dashboard');
-          } else {
-            alert('You are not authorized')
-          }
+        console.log(response.id_user);
+        if (response.isAuthenticated) {
+          navigation.push('Dashboard');
+        } else {
+          alert('You are not authorized')
+        }
       })
       .catch(error => console.log(error));
   }
+
+  const saveUserId = async userId => {
+    try {
+      await AsyncStorage.setItem('userId', userId);
+    } catch (error) {
+      // Error retrieving data
+      console.log(error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>

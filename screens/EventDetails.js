@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Text, ScrollView, View, Image, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
+
 export default function EventDetailsScreen({ route, navigation }) {
 
     const { event } = route.params;

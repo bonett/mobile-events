@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, TextInput, FlatList, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, FlatList, View, ScrollView, TouchableOpacity, AsyncStorage } from 'react-native';
 import ItemEvent from './../components/itemEvent';
-import { AsyncStorage } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 export default function HomeScreen({ navigation }) {
@@ -9,6 +8,21 @@ export default function HomeScreen({ navigation }) {
     const [events, setEvents] = useState(null);
 
     useEffect(() => {
+
+        async function getToken() {
+            try {
+                const response = await fetch(`http://localhost:8080/auth/getToken`, { method: "GET" }),
+                    data = await response.json(),
+                    status = data && data.message,
+                    token = data && data.token;
+
+                if (status === 'Granted') {
+                    saveToken(token);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
 
         async function getEvents() {
             try {
@@ -25,8 +39,18 @@ export default function HomeScreen({ navigation }) {
                 console.error(e);
             }
         }
+
+        getToken();
         getEvents();
     }, []);
+
+    const saveToken = async token => {
+        try {
+            await AsyncStorage.setItem('TOKEN', token);
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
 
     return (
         <View style={styles.container}>
