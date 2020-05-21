@@ -23,7 +23,7 @@ export default function SignInScreen({ navigation }) {
       data = await response.json();
 
     if (data.isAuthenticated) {
-      navigation.push('Dashboard', { session: data.id })
+      navigation.push('Dashboard', { session: data.id });
     } else {
       alert('You are not authorized')
     }

@@ -18,7 +18,7 @@ export default function DashboardScreen({ route, navigation }) {
                 <DashboardStack.Screen name="Home Events" component={HomeScreen} />
                 <DashboardStack.Screen name="Account" component={AccountScreen} />
                 <DashboardStack.Screen name="Detail" component={EventDetailsScreen} />
-                <DashboardStack.Screen name="New Event" component={NewEventScreen} />
+                <DashboardStack.Screen name="Event" component={NewEventScreen} />
             </DashboardStack.Navigator>
         </SessionContext.Provider>
     );

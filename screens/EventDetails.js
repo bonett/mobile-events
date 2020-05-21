@@ -1,11 +1,31 @@
 import * as React from 'react';
-import { StyleSheet, Text, ScrollView, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, ScrollView, View, Image, TouchableOpacity, AsyncStorage } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import SessionContext from './../context/session.context';
+import MapView, { Marker } from 'react-native-maps';
 
 export default function EventDetailsScreen({ route, navigation }) {
 
     const { event } = route.params;
+
+    const removeEvent = async (event) => {
+
+        const id_event = event && event.id_event;
+        const token = await AsyncStorage.getItem('TOKEN') || 'none';
+
+        const response = await fetch(`http://localhost:8080/events/${id_event}`, {
+            method: "DELETE",
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'access-token': token
+            }),
+        }),
+            data = await response.json();
+
+        if (data.status === 'OK') {
+            navigation.navigate('Dashboard');
+        }
+    }
 
     return (
         <SessionContext.Consumer>
@@ -18,6 +38,11 @@ export default function EventDetailsScreen({ route, navigation }) {
                             <View style={styles.media}>
                                 <Image source={{ uri: event.picture }} style={styles.itemPicture} />
                             </View>
+                            <View style={styles.mapContainer}>
+                                <MapView style={styles.map} initialRegion={{ latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude), latitudeDelta: parseFloat(event.latitude_delta), longitudeDelta: parseFloat(event.longitude_delta) }}>
+                                    <Marker coordinate={{latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude)}} title={event.title}/>
+                                </MapView>
+                            </View>
                         </ScrollView>
                         {
                             value === event.id_user ?
@@ -27,7 +52,7 @@ export default function EventDetailsScreen({ route, navigation }) {
                                             <Text style={styles.customButtonText}>Edit Event</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => { }}>
+                                    <TouchableOpacity onPress={() => { removeEvent(event) }}>
                                         <View style={styles.button} >
                                             <Text style={styles.customButtonText}>Remove Event</Text>
                                         </View>
@@ -69,6 +94,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginVertical: 10,
         paddingVertical: 10
+    },
+    mapContainer: {
+        marginVertical: 20,
+        height: 200
+    },
+    map: {
+        height: 200
     },
     itemPicture: {
         marginTop: 10,
