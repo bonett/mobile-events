@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, TextInput, FlatList, View, ScrollView, TouchableOpacity } from 'react-native';
 import ItemEvent from './../components/itemEvent';
+import { AsyncStorage } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 export default function HomeScreen({ navigation }) {
@@ -8,13 +9,23 @@ export default function HomeScreen({ navigation }) {
     const [events, setEvents] = useState(null);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/events`)
-            .then(res => res.json())
-            .then(response => {
-                console.log(response)
-                setEvents(response);
-            })
-            .catch(error => console.log(error));
+
+        async function getEvents() {
+            try {
+                const token = await AsyncStorage.getItem('TOKEN') || 'none';
+                const response = await fetch(`http://localhost:8080/events`, {
+                    method: "GET", headers: new Headers({
+                        'Content-Type': 'application/json',
+                        'access-token': token
+                    })
+                }),
+                    data = await response.json();
+                setEvents(data);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        getEvents();
     }, []);
 
     return (

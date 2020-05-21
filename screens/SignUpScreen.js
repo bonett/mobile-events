@@ -2,22 +2,25 @@ import * as React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 
 export default function SignUpScreen({ navigation }) {
+
+  const [name, onChangeName] = React.useState('');
+  const [email, onChangeEmail] = React.useState('');
+  const [country, onChangeCountry] = React.useState('');
+  const [password, onChangePassword] = React.useState('');
+
+  const registerUser = () => {
+    (name, email, password, country) ? navigation.push('Login') : alert('Invalid Credentials')
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text
-        style={styles.headingText}>
-        Create an account,
-                </Text>
-      <Text
-        style={styles.descriptionText}>
-        Sign up to continue
-                </Text>
-      <TextInput placeholder='Name' style={styles.inputText} />
-      <TextInput placeholder='Email' style={styles.inputText} />
-      <TextInput placeholder='Country' style={styles.inputText} />
-      <TextInput placeholder='Username' style={styles.inputText} />
-      <TextInput placeholder='Password' style={styles.inputText} />
-      <TouchableOpacity onPress={() => { navigation.push('Login') }}>
+      <Text style={styles.headingText}>Create an account,</Text>
+      <Text style={styles.descriptionText}> Sign up to continue </Text>
+      <TextInput placeholder='Name' style={styles.inputText} onChangeText={name => onChangeName(name)} value={name} autoCapitalize="none"/>
+      <TextInput placeholder='Email' style={styles.inputText} onChangeText={email => onChangeEmail(email)} value={email} autoCapitalize="none"/>
+      <TextInput placeholder='Country' style={styles.inputText} onChangeText={country => onChangeCountry(country)} value={country} autoCapitalize="none"/>
+      <TextInput placeholder='Password' style={styles.inputText} onChangeText={password => onChangePassword(password)} value={password} autoCapitalize="none"/>
+      <TouchableOpacity onPress={() => { registerUser() }}>
         <View style={styles.customButton}>
           <Text style={styles.customButtonText}>Continue</Text>
         </View>

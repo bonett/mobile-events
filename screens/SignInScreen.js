@@ -1,16 +1,46 @@
-import * as React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
+import React, { useState } from "react";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, AsyncStorage } from 'react-native';
 
 
 export default function SignInScreen({ navigation }) {
+
+  const [email, onChangeEmail] = useState('wilfrido@gmail.com');
+  const [password, onChangePassword] = useState('123456');
+
+  const loginUser = async () => {
+
+    const payload = {
+      email: email,
+      password: password
+    };
+
+    const token = await AsyncStorage.getItem('TOKEN') || 'none';
+
+    fetch(`http://localhost:8080/auth/login`, {
+      method: "POST",
+      body: payload,
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        'access-token': token
+      })
+    })
+      .then(res => res.json())
+      .then(response => {
+        if (response) {
+          navigation.push('Dashboard');
+        }
+      })
+      .catch(error => console.log(error));
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <Text style={styles.headingText}> Welcome back, </Text>
         <Text style={styles.descriptionText}> Sign in to continue </Text>
-        <TextInput placeholder='Email' style={styles.inputText} />
-        <TextInput placeholder='Password' style={styles.inputText} />
-        <TouchableOpacity onPress={() => { navigation.push('Dashboard') }}>
+        <TextInput placeholder='Email' style={styles.inputText} onChangeText={email => onChangeEmail(email)} value={email} autoCapitalize="none" />
+        <TextInput placeholder='Password' style={styles.inputText} onChangeText={password => onChangePassword(password)} value={password} autoCapitalize="none" />
+        <TouchableOpacity onPress={() => { loginUser() }}>
           <View style={styles.customButton}>
             <Text style={styles.customButtonText}>Continue</Text>
           </View>

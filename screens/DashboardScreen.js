@@ -10,7 +10,7 @@ const DashboardStack = createStackNavigator();
 
 export default function DashboardScreen({ navigation }) {
     return (
-        <DashboardStack.Navigator>
+        <DashboardStack.Navigator >
             <DashboardStack.Screen name="Home Events" component={HomeScreen} />
             <DashboardStack.Screen name="Account" component={AccountScreen} />
             <DashboardStack.Screen name="Detail" component={EventDetailsScreen} />
