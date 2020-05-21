@@ -1,46 +1,33 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, AsyncStorage } from 'react-native';
-
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 
 export default function SignInScreen({ navigation }) {
 
   const [email, onChangeEmail] = useState('wilfrido@gmail.com');
   const [password, onChangePassword] = useState('123456');
 
-  const loginUser = () => {
+  const loginUser = async () => {
 
     const payload = {
       email: email,
       password: password
     };
 
-    fetch(`http://localhost:8080/auth/login`, {
+    const response = await fetch(`http://localhost:8080/auth/login`, {
       method: "POST",
       body: JSON.stringify(payload),
       headers: new Headers({
         'Content-Type': 'application/json'
       })
-    })
-      .then(res => res.json())
-      .then(response => {
-        console.log(response.id_user);
-        if (response.isAuthenticated) {
-          navigation.push('Dashboard');
-        } else {
-          alert('You are not authorized')
-        }
-      })
-      .catch(error => console.log(error));
-  }
+    }),
+      data = await response.json();
 
-  const saveUserId = async userId => {
-    try {
-      await AsyncStorage.setItem('userId', userId);
-    } catch (error) {
-      // Error retrieving data
-      console.log(error.message);
+    if (data.isAuthenticated) {
+      navigation.push('Dashboard', { session: data.id })
+    } else {
+      alert('You are not authorized')
     }
-  };
+  }
 
   return (
     <View style={styles.container}>

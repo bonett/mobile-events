@@ -1,34 +1,43 @@
 import * as React from 'react';
 import { StyleSheet, Text, ScrollView, View, Image, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-
+import SessionContext from './../context/session.context';
 
 export default function EventDetailsScreen({ route, navigation }) {
 
     const { event } = route.params;
 
     return (
-        <>
-            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                <Text style={styles.title}>{event.title}</Text>
-                <Text style={styles.description}>{event.description}</Text>
-                <View style={styles.media}>
-                    <Image source={{ uri: event.picture }} style={styles.itemPicture} />
-                </View>
-            </ScrollView>
-            <View style={styles.footer}>
-                <TouchableOpacity onPress={() => { }}>
-                    <View style={styles.button} >
-                        <Text style={styles.customButtonText}>Edit Event</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }}>
-                    <View style={styles.button} >
-                        <Text style={styles.customButtonText}>Remove Event</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-        </>
+        <SessionContext.Consumer>
+            {
+                value => (
+                    <>
+                        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+                            <Text style={styles.title}>{event.title}</Text>
+                            <Text style={styles.description}>{event.description}</Text>
+                            <View style={styles.media}>
+                                <Image source={{ uri: event.picture }} style={styles.itemPicture} />
+                            </View>
+                        </ScrollView>
+                        {
+                            value === event.id_user ?
+                                <View style={styles.footer}>
+                                    <TouchableOpacity onPress={() => { }}>
+                                        <View style={styles.button} >
+                                            <Text style={styles.customButtonText}>Edit Event</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => { }}>
+                                        <View style={styles.button} >
+                                            <Text style={styles.customButtonText}>Remove Event</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                                : null
+                        }
+                    </>
+                )}
+        </SessionContext.Consumer>
     );
 }
 
