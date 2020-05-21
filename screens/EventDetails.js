@@ -78,15 +78,16 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 30,
-        fontWeight: "600",
-        marginVertical: 10,
-        paddingVertical: 10
+        fontWeight: "800",
+        marginVertical: 4,
+        paddingVertical: 4
     },
     description: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: "300",
-        marginVertical: 10,
-        paddingVertical: 10
+        marginVertical: 4,
+        paddingVertical: 4,
+        textAlign: "justify"
     },
     media: {
         height: 160,
@@ -106,6 +107,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         width: 140,
         height: 140,
+        borderRadius: 80
     },
     footer: {
         backgroundColor: '#fff',
