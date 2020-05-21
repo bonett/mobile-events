@@ -19,7 +19,7 @@ export default function DashboardScreen({ route, navigation }) {
                     headerRight: () => (
                         <Button
                             onPress={() =>  {}}
-                            title="SIgn Out"
+                            title="Sign Out"
                             color="#2433AC"
                         />
                     ),

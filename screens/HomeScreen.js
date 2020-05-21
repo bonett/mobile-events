@@ -42,7 +42,7 @@ export default function HomeScreen({ navigation }) {
 
         getToken();
         getEvents();
-    }, []);
+    }, [events]);
 
     const saveToken = async token => {
         try {
