@@ -1,12 +1,27 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
-
+import MapView, { Marker } from 'react-native-maps';
 
 export default function NewEventScreen({ navigation }) {
 
     const [title, onChangeTitle] = useState();
     const [description, onChangeDescription] = useState();
     const [picture, onChangePicture] = useState();
+    const [region, setRegion] = useState({
+        latitude: 37.78825,
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+    })
+
+    const onRegionChange = (region) => {
+        setRegion({
+            latitude: region.latitude,
+            longitude: region.longitude,
+            latitudeDelta: region.latitudeDelta,
+            longitudeDelta: region.longitudeDelta,
+        });
+    }
 
     return (
         <>
@@ -15,6 +30,11 @@ export default function NewEventScreen({ navigation }) {
 
                     <TextInput placeholder='Title' style={styles.inputText} onChangeText={title => onChangeTitle(title)} value={title} autoCapitalize="none" />
                     <TextInput placeholder='Description' style={styles.inputText} onChangeText={description => onChangeDescription(description)} value={description} autoCapitalize="none" />
+                    <View style={styles.mapContainer}>
+                        <MapView style={styles.map} region={region} onRegionChange={onRegionChange}>
+                            <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
+                        </MapView>
+                    </View>
                 </ScrollView>
             </View>
             <TouchableOpacity onPress={() => { navigation.push('Event') }}>
@@ -45,6 +65,13 @@ const styles = StyleSheet.create({
         fontSize: 36,
         fontWeight: "200",
         paddingVertical: 10
+    },
+    mapContainer: {
+        marginVertical: 20,
+        height: 200
+    },
+    map: {
+        height: 200
     },
     inputText: {
         height: 48,

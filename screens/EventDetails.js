@@ -23,7 +23,7 @@ export default function EventDetailsScreen({ route, navigation }) {
             data = await response.json();
 
         if (data.status === 'OK') {
-            navigation.navigate('Dashboard');
+            navigation.navigate('Home Events');
         }
     }
 
@@ -47,7 +47,7 @@ export default function EventDetailsScreen({ route, navigation }) {
                         {
                             value === event.id_user ?
                                 <View style={styles.footer}>
-                                    <TouchableOpacity onPress={() => { }}>
+                                    <TouchableOpacity onPress={() => { navigation.navigate('Home Events')}}>
                                         <View style={styles.button} >
                                             <Text style={styles.customButtonText}>Edit Event</Text>
                                         </View>
