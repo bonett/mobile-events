@@ -4,13 +4,12 @@ import MapView, { Marker } from 'react-native-maps';
 import SessionContext from './../context/session.context';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 export default function NewEventScreen({ route, navigation }) {
 
     const [title, onChangeTitle] = useState(route.params.event !== null ? route.params.event.title : null);
     const [description, onChangeDescription] = useState(route.params.event !== null ? route.params.event.description : null);
-    const [picture, setPicture] = useState(route.params.event !== null ? { image: { uri: route.params.event.picture } } : null);
-    const [storageImage, setStorageImage] = useState(route.params.event !== null ? route.params.event.picture : null);
     const [region, setRegion] = useState(
         route.params.event !== null ? {
             latitude: parseFloat(route.params.event.latitude),
@@ -23,6 +22,9 @@ export default function NewEventScreen({ route, navigation }) {
                 latitudeDelta: 0,
                 longitudeDelta: 0
             });
+
+    const [picture, setPicture] = useState(route.params.event !== null ? route.params.event.picture : null);
+    const [responseStorage, setResponseStorage] = useState(null);
 
     useEffect(() => {
 
@@ -47,58 +49,6 @@ export default function NewEventScreen({ route, navigation }) {
         });
     }
 
-    const validateDataRegister = async (userId) => {
-        await _cloudStorage();
-        await registerEvent(userId);
-    }
-
-    const registerEvent = async (userId) => {
-
-        if (storageImage) {
-
-            const payload = {
-                title: title,
-                description: description,
-                picture: storageImage,
-                id_user: userId,
-                latitude: region.latitude,
-                longitude: region.longitude,
-                latitude_delta: region.latitudeDelta,
-                longitude_delta: region.longitudeDelta
-            }
-
-            const token = await AsyncStorage.getItem('TOKEN') || 'none';
-
-            const response = await fetch(`http://localhost:8080/events`, {
-                method: "POST",
-                body: JSON.stringify(payload),
-                headers: new Headers({
-                    'Content-Type': 'application/json',
-                    'access-token': token
-                })
-            }),
-                data = await response.json();
-
-            if (data.status === 'OK') {
-                navigation.navigate('Home Events');
-            }
-        }
-    }
-
-    const _cloudStorage = async () => {
-        const data = new FormData()
-        data.append('file', picture.image)
-        data.append('upload_preset', 'dhk2sbwpg')
-        data.append("cloud_name", "dhk2sbwpg")
-
-        const response = await fetch(`https://api.cloudinary.com/v1_1/dhk2sbwpg/upload`, {
-            method: "POST",
-            body: data
-        }),
-            res = await response.json();
-        setStorageImage(res.url);
-    }
-
     const _pickImage = async () => {
         try {
             let result = await ImagePicker.launchImageLibraryAsync({
@@ -107,7 +57,7 @@ export default function NewEventScreen({ route, navigation }) {
                 aspect: [4, 3],
                 quality: 1
             });
-            console.log(result)
+
             if (!result.cancelled) {
 
                 const uri = result.uri;
@@ -118,42 +68,95 @@ export default function NewEventScreen({ route, navigation }) {
                     type,
                     name,
                 }
-
-                setPicture({ image: source });
+                setResponseStorage(source);
+                setPicture(source.uri);
             }
         } catch (err) {
             console.log(err);
         }
     };
 
+    const validateDataRegister = async (userId) => {
+        await _cloudStorage(userId);
+    }
+
+    const _cloudStorage = async (userId) => {
+
+        const data = new FormData()
+        data.append('file', responseStorage)
+        data.append('upload_preset', 'dhk2sbwpg')
+        data.append("cloud_name", "dhk2sbwpg")
+
+        const response = await fetch(`https://api.cloudinary.com/v1_1/dhk2sbwpg/upload`, {
+            method: "POST",
+            body: data
+        }),
+
+            res = await response.json();
+
+        await registerEvent(userId, res.url);
+
+    }
+
+    const registerEvent = async (userId, storagePicture) => {
+
+        const payload = {
+            title: title,
+            description: description,
+            picture: storagePicture,
+            id_user: userId,
+            latitude: region.latitude,
+            longitude: region.longitude,
+            latitude_delta: region.latitudeDelta,
+            longitude_delta: region.longitudeDelta
+        }
+
+        console.log(payload)
+
+        const token = await AsyncStorage.getItem('TOKEN') || 'none';
+
+        const response = await fetch(`http://localhost:8080/events`, {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'access-token': token
+            })
+        }),
+            data = await response.json();
+
+        console.log(data);
+        if (data.status === 'OK') {
+            navigation.navigate('Home Events');
+        }
+    }
+
     return (
         <SessionContext.Consumer>
             {
                 value => (
-                    <>
-                        <View style={styles.container}>
-                            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                                <View style={styles.attach}>
-                                    {
-                                        picture && <Image source={{ uri: picture.image.uri }} style={styles.avatar} />
-                                    }
-                                    <Button title="Choose an image" onPress={() => _pickImage()} />
-                                </View>
-                                <TextInput placeholder='Title' style={styles.inputText} onChangeText={title => onChangeTitle(title)} value={title} autoCapitalize="none" />
-                                <TextInput placeholder='Description' style={styles.inputText} onChangeText={description => onChangeDescription(description)} value={description} autoCapitalize="none" />
-                                <View style={styles.mapContainer}>
-                                    <MapView style={styles.map} region={region} onRegionChange={onRegionChange}>
-                                        <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
-                                    </MapView>
-                                </View>
-                            </ScrollView>
-                        </View>
-                        <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
-                            <View style={styles.bottomView} >
-                                <Text style={styles.textStyle}>Create Event</Text>
+                    <View style={styles.container}>
+                        <View style={styles.body}>
+                            <View style={styles.attach}>
+                                <Image source={{ uri: picture ? picture : 'https://www.shareicon.net/data/128x128/2017/02/05/878222_camera_512x512.png' }} style={styles.image} />
+                                <Button title="Choose an image" onPress={() => _pickImage()} />
                             </View>
-                        </TouchableOpacity>
-                    </>
+                            <TextInput placeholder='Title' style={styles.inputText} onChangeText={title => onChangeTitle(title)} value={title} autoCapitalize="none" />
+                            <TextInput placeholder='Description' style={styles.inputText} onChangeText={description => onChangeDescription(description)} value={description} autoCapitalize="none" />
+                            <View style={styles.mapContainer}>
+                                <MapView style={styles.map} region={region} onRegionChange={onRegionChange}>
+                                    <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
+                                </MapView>
+                            </View>
+                        </View>
+                        <View style={styles.footer}>
+                            <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
+                                <View style={styles.buttonContent} >
+                                    <Text style={styles.buttonText}>Create Event</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 )}
         </SessionContext.Consumer>
     );
@@ -162,32 +165,41 @@ export default function NewEventScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: '#fff',
     },
-    contentContainer: {
-        flex: 1,
-        paddingTop: 20,
-        paddingStart: 20,
-        paddingEnd: 20,
+    body: {
+        flex: 8,
+        justifyContent: 'center'
     },
-    attach: {
-        paddingBottom: 20,
+    footer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: "#2433AC"
+    },
+    buttonContent: {
+        width: wp('100%'),
         justifyContent: 'center',
         alignItems: 'center',
     },
-    avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 80
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '400',
+        textTransform: "uppercase"
     },
-    headingText: {
-        fontSize: 30,
-        fontWeight: "400"
+    attach: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    descriptionText: {
-        fontSize: 36,
-        fontWeight: "200",
-        paddingVertical: 10
+    image: {
+        width: 80,
+        height: 80,
+        borderRadius: 100,
+        opacity: 0.6
     },
     mapContainer: {
         marginVertical: 20,
@@ -198,6 +210,7 @@ const styles = StyleSheet.create({
     },
     inputText: {
         height: 48,
+        width: wp('90%'),
         marginVertical: 8,
         borderWidth: 1,
         borderColor: "#ededed",

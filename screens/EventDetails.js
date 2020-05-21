@@ -31,36 +31,34 @@ export default function EventDetailsScreen({ route, navigation }) {
         <SessionContext.Consumer>
             {
                 value => (
-                    <>
-                        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                            <Text style={styles.title}>{event.title}</Text>
-                            <Text style={styles.description}>{event.description}</Text>
-                            <View style={styles.media}>
-                                <Image source={{ uri: event.picture }} style={styles.itemPicture} />
-                            </View>
-                            <View style={styles.mapContainer}>
-                                <MapView style={styles.map} initialRegion={{ latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude), latitudeDelta: parseFloat(event.latitude_delta), longitudeDelta: parseFloat(event.longitude_delta) }}>
-                                    <Marker coordinate={{ latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude) }} title={event.title} />
-                                </MapView>
-                            </View>
-                        </ScrollView>
-                        {
-                            value === event.id_user ?
-                                <View style={styles.footer}>
-                                    <TouchableOpacity onPress={() => { navigation.navigate('Event', { event: event }) }}>
-                                        <View style={styles.button} >
-                                            <Text style={styles.customButtonText}>Edit Event</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => { removeEvent(event) }}>
-                                        <View style={styles.button} >
-                                            <Text style={styles.customButtonText}>Remove Event</Text>
-                                        </View>
-                                    </TouchableOpacity>
+                    <View style={styles.container}>
+                        <View style={styles.body}>
+                            <ScrollView contentContainerStyle={styles.contentContainer}>
+                                <Text style={styles.title}>{event.title}</Text>
+                                <Text style={styles.description}>{event.description}</Text>
+                                <View style={styles.media}>
+                                    <Image source={{ uri: event.picture }} style={styles.itemPicture} />
                                 </View>
-                                : null
-                        }
-                    </>
+                                <View style={styles.mapContainer}>
+                                    <MapView style={styles.map} initialRegion={{ latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude), latitudeDelta: parseFloat(event.latitude_delta), longitudeDelta: parseFloat(event.longitude_delta) }}>
+                                        <Marker coordinate={{ latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude) }} title={event.title} />
+                                    </MapView>
+                                </View>
+                            </ScrollView>
+                        </View>
+                        <View style={styles.footer}>
+                            <TouchableOpacity onPress={() => { navigation.navigate('Event', { event: event }) }}>
+                                <View style={styles.buttonContent} >
+                                    <Text style={styles.buttonText}>Edit Event</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { removeEvent(event) }}>
+                                <View style={styles.buttonContent} >
+                                    <Text style={styles.buttonText}>Remove Event</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 )}
         </SessionContext.Consumer>
     );
@@ -69,7 +67,32 @@ export default function EventDetailsScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: '#fff',
+    },
+    body: {
+        flex: 8,
+        justifyContent: 'center'
+    },
+    footer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: "#2433AC",
+    },
+    buttonContent: {
+        width: wp('50%'),
+        backgroundColor: "#2433AC",
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '400',
+        textTransform: "uppercase"
     },
     contentContainer: {
         paddingVertical: 10,
@@ -108,28 +131,5 @@ const styles = StyleSheet.create({
         width: 140,
         height: 140,
         borderRadius: 80
-    },
-    footer: {
-        backgroundColor: '#fff',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        paddingVertical: 20
-    },
-    button: {
-        backgroundColor: "#2433AC",
-        height: 48,
-        marginVertical: 8,
-        borderRadius: 4,
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontWeight: "600",
-        paddingHorizontal: 20
-    },
-    customButtonText: {
-        fontSize: 18,
-        color: "#fff",
-        fontWeight: '400',
-        textTransform: "uppercase"
-    },
+    }
 });

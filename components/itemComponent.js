@@ -1,26 +1,27 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
-const ItemEvent = (props) => {
+const ItemComponent = (props) => {
 
     const { event } = props;
 
     return (
         <View style={styles.itemContent}>
             <View style={styles.itemCard}>
-                <Image source={{ uri: event.picture }} style={styles.itemPicture} />
+                {
+                    event.picture !== null ? <Image source={{ uri: event.picture }} style={styles.itemPicture} /> : null
+                }
                 <Text style={styles.text}>{event.title}</Text>
             </View>
         </View>
     )
 }
 
-export default ItemEvent
+export default ItemComponent
 
 const styles = StyleSheet.create({
     itemContent: {
-        backgroundColor: "#fff",
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     },
     text: {
         marginVertical: 10,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '600',
         textAlign: 'center'
     }
