@@ -10,6 +10,7 @@ export default function NewEventScreen({ navigation }) {
     const [title, onChangeTitle] = useState();
     const [description, onChangeDescription] = useState();
     const [picture, setPicture] = useState(null);
+    const [storageImage, setStorageImage] = useState();
     const [region, setRegion] = useState({
         latitude: 37.78825,
         longitude: -122.4324,
@@ -40,33 +41,56 @@ export default function NewEventScreen({ navigation }) {
         });
     }
 
-    const registerEvent = async (id) => {
-        const payload = {
-            title: title,
-            description: description,
-            picture: picture,
-            id_user: id,
-            latitude: region.latitude,
-            longitude: region.longitude,
-            latitude_delta: region.latitudeDelta,
-            longitude_delta: region.longitudeDelta
-        };
+    const validateDataRegister = async (userId) => {
+        await _cloudStorage();
+        await registerEvent(userId);
+    }
 
-        const token = await AsyncStorage.getItem('TOKEN') || 'none';
+    const registerEvent = async (userId) => {
 
-        const response = await fetch(`http://localhost:8080/events`, {
-            method: "POST",
-            body: JSON.stringify(payload),
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'access-token': token
-            })
-        }),
-            data = await response.json();
+        if (storageImage) {
 
-        if (data.status === 'OK') {
-            navigation.navigate('Home Events');
+            const payload = {
+                title: title,
+                description: description,
+                picture: storageImage,
+                id_user: userId,
+                latitude: region.latitude,
+                longitude: region.longitude,
+                latitude_delta: region.latitudeDelta,
+                longitude_delta: region.longitudeDelta
+            }
+
+            const token = await AsyncStorage.getItem('TOKEN') || 'none';
+
+            const response = await fetch(`http://localhost:8080/events`, {
+                method: "POST",
+                body: JSON.stringify(payload),
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'access-token': token
+                })
+            }),
+                data = await response.json();
+
+            if (data.status === 'OK') {
+                navigation.navigate('Home Events');
+            }
         }
+    }
+
+    const _cloudStorage = async () => {
+        const data = new FormData()
+        data.append('file', picture.image)
+        data.append('upload_preset', 'dhk2sbwpg')
+        data.append("cloud_name", "dhk2sbwpg")
+
+        const response = await fetch(`https://api.cloudinary.com/v1_1/dhk2sbwpg/upload`, {
+            method: "POST",
+            body: data
+        }),
+            res = await response.json();
+        setStorageImage( res.url);
     }
 
     const _pickImage = async () => {
@@ -75,13 +99,24 @@ export default function NewEventScreen({ navigation }) {
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
                 allowsEditing: true,
                 aspect: [4, 3],
-                quality: 1,
+                quality: 1
             });
+            console.log(result)
             if (!result.cancelled) {
-                setPicture({ image: result.uri });
+
+                const uri = result.uri;
+                const type = result.type;
+                const name = result.uri;
+                const source = {
+                    uri,
+                    type,
+                    name,
+                }
+
+                setPicture({ image: source });
             }
-        } catch (E) {
-            console.log(E);
+        } catch (err) {
+            console.log(err);
         }
     };
 
@@ -94,7 +129,7 @@ export default function NewEventScreen({ navigation }) {
                             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                                 <View style={styles.attach}>
                                     {
-                                        picture && <Image source={{ uri: picture.image }} style={styles.avatar} />
+                                        picture && <Image source={{ uri: picture.image.uri }} style={styles.avatar} />
                                     }
                                     <Button title="Choose an image" onPress={() => _pickImage()} />
                                 </View>
@@ -107,7 +142,7 @@ export default function NewEventScreen({ navigation }) {
                                 </View>
                             </ScrollView>
                         </View>
-                        <TouchableOpacity onPress={() => { registerEvent(value) }}>
+                        <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
                             <View style={styles.bottomView} >
                                 <Text style={styles.textStyle}>Create Event</Text>
                             </View>
