@@ -47,7 +47,7 @@ export default function EventDetailsScreen({ route, navigation }) {
                         {
                             value === event.id_user ?
                                 <View style={styles.footer}>
-                                    <TouchableOpacity onPress={() => { navigation.navigate('Home Events') }}>
+                                    <TouchableOpacity onPress={() => { navigation.navigate('Event', { event: event }) }}>
                                         <View style={styles.button} >
                                             <Text style={styles.customButtonText}>Edit Event</Text>
                                         </View>

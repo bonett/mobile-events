@@ -5,18 +5,24 @@ import SessionContext from './../context/session.context';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 
-export default function NewEventScreen({ navigation }) {
+export default function NewEventScreen({ route, navigation }) {
 
-    const [title, onChangeTitle] = useState();
-    const [description, onChangeDescription] = useState();
-    const [picture, setPicture] = useState(null);
-    const [storageImage, setStorageImage] = useState();
-    const [region, setRegion] = useState({
-        latitude: 37.78825,
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-    });
+    const [title, onChangeTitle] = useState(route.params.event !== null ? route.params.event.title : null);
+    const [description, onChangeDescription] = useState(route.params.event !== null ? route.params.event.description : null);
+    const [picture, setPicture] = useState(route.params.event !== null ? { image: { uri: route.params.event.picture } } : null);
+    const [storageImage, setStorageImage] = useState(route.params.event !== null ? route.params.event.picture : null);
+    const [region, setRegion] = useState(
+        route.params.event !== null ? {
+            latitude: parseFloat(route.params.event.latitude),
+            longitude: parseFloat(route.params.event.longitude),
+            latitudeDelta: parseFloat(route.params.event.latitude_delta),
+            longitudeDelta: parseFloat(route.params.event.longitude_delta)
+        } : {
+                latitude: 0,
+                longitude: 0,
+                latitudeDelta: 0,
+                longitudeDelta: 0
+            });
 
     useEffect(() => {
 
@@ -90,7 +96,7 @@ export default function NewEventScreen({ navigation }) {
             body: data
         }),
             res = await response.json();
-        setStorageImage( res.url);
+        setStorageImage(res.url);
     }
 
     const _pickImage = async () => {
