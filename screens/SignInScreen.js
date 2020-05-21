@@ -18,7 +18,7 @@ export default function SignInScreen({ navigation }) {
 
     fetch(`http://localhost:8080/auth/login`, {
       method: "POST",
-      body: payload,
+      body: JSON.stringify(payload),
       headers: new Headers({
         'Content-Type': 'application/json',
         'access-token': token
@@ -26,9 +26,11 @@ export default function SignInScreen({ navigation }) {
     })
       .then(res => res.json())
       .then(response => {
-        if (response) {
-          navigation.push('Dashboard');
-        }
+          if (response.isAuthenticated) {
+            navigation.push('Dashboard');
+          } else {
+            alert('You are not authorized')
+          }
       })
       .catch(error => console.log(error));
   }
@@ -36,10 +38,10 @@ export default function SignInScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.headingText}> Welcome back, </Text>
+        <Text style={styles.headingText}> Hello ! </Text>
         <Text style={styles.descriptionText}> Sign in to continue </Text>
         <TextInput placeholder='Email' style={styles.inputText} onChangeText={email => onChangeEmail(email)} value={email} autoCapitalize="none" />
-        <TextInput placeholder='Password' style={styles.inputText} onChangeText={password => onChangePassword(password)} value={password} autoCapitalize="none" />
+        <TextInput placeholder='Password' secureTextEntry={true} style={styles.inputText} onChangeText={password => onChangePassword(password)} value={password} autoCapitalize="none" />
         <TouchableOpacity onPress={() => { loginUser() }}>
           <View style={styles.customButton}>
             <Text style={styles.customButtonText}>Continue</Text>

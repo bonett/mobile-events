@@ -3,23 +3,43 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 
 
 export default function SignUpScreen({ navigation }) {
 
-  const [name, onChangeName] = React.useState('');
-  const [email, onChangeEmail] = React.useState('');
-  const [country, onChangeCountry] = React.useState('');
-  const [password, onChangePassword] = React.useState('');
+  const [username, onChangeUserName] = React.useState('wbonett10');
+  const [email, onChangeEmail] = React.useState('wilfrido@gmail.com');
+  const [password, onChangePassword] = React.useState('123456');
 
   const registerUser = () => {
-    (name, email, password, country) ? navigation.push('Login') : alert('Invalid Credentials')
+
+    const payload = {
+      username: username,
+      email: email,
+      password: password
+    };
+
+    fetch(`http://localhost:8080/auth/register`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    })
+      .then(res => res.json())
+      .then(response => {
+        if(response.status === 'OK') {
+          navigation.push('Login');
+        } else {
+          alert(response.message);
+        }
+      })
+      .catch(error => console.log(error));
   }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.headingText}>Create an account,</Text>
+      <Text style={styles.headingText}>Create an account</Text>
       <Text style={styles.descriptionText}> Sign up to continue </Text>
-      <TextInput placeholder='Name' style={styles.inputText} onChangeText={name => onChangeName(name)} value={name} autoCapitalize="none"/>
-      <TextInput placeholder='Email' style={styles.inputText} onChangeText={email => onChangeEmail(email)} value={email} autoCapitalize="none"/>
-      <TextInput placeholder='Country' style={styles.inputText} onChangeText={country => onChangeCountry(country)} value={country} autoCapitalize="none"/>
-      <TextInput placeholder='Password' style={styles.inputText} onChangeText={password => onChangePassword(password)} value={password} autoCapitalize="none"/>
+      <TextInput placeholder='Username' style={styles.inputText} onChangeText={username => onChangeUserName(username)} value={username} autoCapitalize="none" />
+      <TextInput placeholder='Email' style={styles.inputText} onChangeText={email => onChangeEmail(email)} value={email} autoCapitalize="none" />
+      <TextInput placeholder='Password' secureTextEntry={true} style={styles.inputText} onChangeText={password => onChangePassword(password)} value={password} autoCapitalize="none" />
       <TouchableOpacity onPress={() => { registerUser() }}>
         <View style={styles.customButton}>
           <Text style={styles.customButtonText}>Continue</Text>
