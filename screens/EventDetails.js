@@ -46,18 +46,22 @@ export default function EventDetailsScreen({ route, navigation }) {
                                 </View>
                             </ScrollView>
                         </View>
-                        <View style={styles.footer}>
-                            <TouchableOpacity onPress={() => { navigation.navigate('Event', { event: event }) }}>
-                                <View style={styles.buttonContent} >
-                                    <Text style={styles.buttonText}>Edit Event</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { removeEvent(event) }}>
-                                <View style={styles.buttonContent} >
-                                    <Text style={styles.buttonText}>Remove Event</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                        {
+                            value === event.id_user ?
+                                <View style={styles.footer}>
+                                    <TouchableOpacity onPress={() => { navigation.navigate('Event', { event: event }) }}>
+                                        <View style={styles.buttonContent} >
+                                            <Text style={styles.buttonText}>Edit Event</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => { removeEvent(event) }}>
+                                        <View style={styles.buttonContent} >
+                                            <Text style={styles.buttonText}>Remove Event</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View> :
+                                null
+                        }
                     </View>
                 )}
         </SessionContext.Consumer>

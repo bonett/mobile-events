@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, Button } from 'react-native';
 import SessionContext from './../context/session.context';
 import HomeScreen from './HomeScreen';
 import EventDetailsScreen from './EventDetails';
@@ -10,7 +10,8 @@ const DashboardStack = createStackNavigator();
 
 export default function DashboardScreen({ route, navigation }) {
 
-    const { session } = route.params;
+    const [isAuthorized, setIsAuthorized] = useState(false),
+        { session } = route.params;
 
     useEffect(() => {
 
@@ -22,6 +23,7 @@ export default function DashboardScreen({ route, navigation }) {
                     token = data && data.token;
 
                 if (status === 'Granted') {
+                    setIsAuthorized(true);
                     saveToken(token);
                 }
             } catch (e) {
@@ -40,13 +42,35 @@ export default function DashboardScreen({ route, navigation }) {
         }
     };
 
+    const redirectLogin = async () => {
+        try {
+            navigation.navigate('Login');
+            await AsyncStorage.removeItem('TOKEN');
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
     return (
-        <SessionContext.Provider value={session}>
-            <DashboardStack.Navigator>
-                <DashboardStack.Screen name="Home Events" component={HomeScreen} />
-                <DashboardStack.Screen name="Detail" component={EventDetailsScreen} />
-                <DashboardStack.Screen name="Event" component={NewEventScreen} />
-            </DashboardStack.Navigator>
-        </SessionContext.Provider>
+        <>
+            {
+                isAuthorized ? <SessionContext.Provider value={session}>
+                    <DashboardStack.Navigator>
+                        <DashboardStack.Screen name="Home Events" component={HomeScreen} options={{
+                            headerRight: () => (
+                                <Button
+                                    onPress={() => { redirectLogin() }}
+                                    title="Log out"
+                                    color="#000"
+                                />
+                            ),
+                        }} />
+                        <DashboardStack.Screen name="Detail" component={EventDetailsScreen} />
+                        <DashboardStack.Screen name="Event" component={NewEventScreen} />
+                    </DashboardStack.Navigator>
+                </SessionContext.Provider>
+                    : redirectLogin
+            }
+        </>
     );
 }

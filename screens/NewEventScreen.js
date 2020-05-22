@@ -16,19 +16,18 @@ const INITIAL_REGION = {
 
 export default function NewEventScreen({ route, navigation }) {
 
-    const [title, onChangeTitle] = useState(route.params.event !== null ? route.params.event.title : null);
-    const [description, onChangeDescription] = useState(route.params.event !== null ? route.params.event.description : null);
-    const [picture, setPicture] = useState(route.params.event !== null ? route.params.event.picture : null);
-    const [responseStorage, setResponseStorage] = useState(route.params.event !== null ? route.params.event.picture : null);
-    const [region, setRegion] = useState(
-        route.params.event !== null ? {
-            latitude: parseFloat(route.params.event.latitude),
-            longitude: parseFloat(route.params.event.longitude),
-            latitudeDelta: parseFloat(route.params.event.latitude_delta),
-            longitudeDelta: parseFloat(route.params.event.longitude_delta)
-        } : INITIAL_REGION);
-
-    const [loader, setLoader] = useState(false);
+    const [title, onChangeTitle] = useState(route.params.event !== null ? route.params.event.title : null),
+        [description, onChangeDescription] = useState(route.params.event !== null ? route.params.event.description : null),
+        [picture, setPicture] = useState(route.params.event !== null ? route.params.event.picture : null),
+        [responseStorage, setResponseStorage] = useState(route.params.event !== null ? route.params.event.picture : null),
+        [loader, setLoader] = useState(false),
+        [region, setRegion] = useState(
+            route.params.event !== null ? {
+                latitude: parseFloat(route.params.event.latitude),
+                longitude: parseFloat(route.params.event.longitude),
+                latitudeDelta: parseFloat(route.params.event.latitude_delta),
+                longitudeDelta: parseFloat(route.params.event.longitude_delta)
+            } : INITIAL_REGION);
 
     useEffect(() => {
 
@@ -64,14 +63,15 @@ export default function NewEventScreen({ route, navigation }) {
 
             if (!result.cancelled) {
 
-                const uri = result.uri;
-                const type = result.type;
-                const name = result.uri;
-                const source = {
-                    uri,
-                    type,
-                    name,
-                }
+                const uri = result.uri,
+                    type = result.type,
+                    name = result.uri,
+                    source = {
+                        uri,
+                        type,
+                        name
+                    };
+
                 setResponseStorage(source);
                 setPicture(source.uri);
             }

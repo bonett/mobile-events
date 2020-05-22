@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native';
+import TextInputComponent from '../components/inputs/TextInputComponent';
+import TextComponent from '../components/inputs/TextComponent';
+import ButtonComponent from '../components/inputs/ButtonComponent';
+import helpers from './../helpers/validations';
 
 export default function SignUpScreen({ navigation }) {
 
@@ -24,7 +28,7 @@ export default function SignUpScreen({ navigation }) {
     })
       .then(res => res.json())
       .then(response => {
-        if(response.status === 'OK') {
+        if (response.status === 'OK') {
           navigation.push('Login');
         } else {
           alert(response.message);
@@ -33,24 +37,82 @@ export default function SignUpScreen({ navigation }) {
       .catch(error => console.log(error));
   }
 
+  const getUsername = (value) => {
+    onChangeUserName(value);
+  }
+
+  const getEmail = (value) => {
+    onChangeEmail(value);
+  }
+
+  const getPassword = (value) => {
+    onChangePassword(value);
+  }
+
+  const _userSignUp = () => {
+
+    const emailValidation = helpers.validateEmail(email);
+
+    if(emailValidation) {
+      navigation.push('Login');
+    } else {
+      alert('Please enter a valid email');
+    }
+  }
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.headingText}>Create an account</Text>
-      <Text style={styles.descriptionText}> Sign up to continue </Text>
-      <TextInput placeholder='Username' style={styles.inputText} onChangeText={username => onChangeUserName(username)} value={username} autoCapitalize="none" />
-      <TextInput placeholder='Email' style={styles.inputText} onChangeText={email => onChangeEmail(email)} value={email} autoCapitalize="none" />
-      <TextInput placeholder='Password' secureTextEntry={true} style={styles.inputText} onChangeText={password => onChangePassword(password)} value={password} autoCapitalize="none" />
-      <TouchableOpacity onPress={() => { registerUser() }}>
-        <View style={styles.customButton}>
-          <Text style={styles.customButtonText}>Continue</Text>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.formGroup}>
+          <TextComponent
+            value={'Create an account'}
+            size={30}
+            weight={"400"} />
         </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => { navigation.push('Login') }}>
-        <View style={styles.customLink}>
-          <Text style={styles.customLinkText}>I have an account</Text>
+        <View style={styles.formGroup}>
+          <TextComponent
+            value={'Sign up to continue'}
+            size={36}
+            weight={"200"} />
         </View>
-      </TouchableOpacity>
-    </ScrollView>
+        <View style={styles.formGroup}>
+          <TextInputComponent
+            value={username}
+            placeholder={'Username'}
+            setValue={getUsername}
+            secureTextEntry={false}
+          />
+        </View>
+        <View style={styles.formGroup}>
+          <TextInputComponent
+            value={email}
+            placeholder={'Email'}
+            setValue={getEmail}
+            secureTextEntry={false}
+          />
+        </View>
+        <View style={styles.formGroup}>
+          <TextInputComponent
+            value={password}
+            placeholder={'Password'}
+            setValue={getPassword}
+            secureTextEntry={true}
+          />
+        </View>
+        <View style={styles.formGroup}>
+          <TouchableOpacity onPress={() => { _userSignUp() }}>
+            <ButtonComponent
+              value={'Continue'} main={true} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.formGroup}>
+          <TouchableOpacity onPress={() => { navigation.push('Login') }}>
+            <ButtonComponent
+              value={'I have an account'} main={false} />
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -60,59 +122,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fafafa',
     paddingVertical: 40
   },
-  contentContainer: {
+  scrollContainer: {
     flex: 1,
     paddingTop: 40,
     paddingStart: 20,
     paddingEnd: 20,
   },
-  headingText: {
-    fontSize: 30,
-    fontWeight: "400"
-  },
-  descriptionText: {
-    fontSize: 36,
-    fontWeight: "200",
-    paddingVertical: 10
-  },
-  inputText: {
-    height: 48,
-    marginVertical: 8,
-    borderWidth: 1,
-    borderColor: "#ededed",
-    borderRadius: 4,
-    color: "#20232a",
-    fontSize: 20,
-    fontWeight: "300",
-    paddingStart: 8,
-    paddingEnd: 8,
-  },
-  customButton: {
-    backgroundColor: "#2433AC",
-    height: 48,
-    marginVertical: 8,
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontWeight: "600"
-  },
-  customButtonText: {
-    fontSize: 18,
-    fontWeight: '400',
-    textTransform: "uppercase",
-    color: "#fff",
-  },
-  customLink: {
-    height: 48,
-    marginVertical: 8,
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontWeight: "600"
-  },
-  customLinkText: {
-    fontSize: 14,
-    fontWeight: '300',
-    color: "#2433AC",
-  },
+  formGroup: {
+    marginVertical: 4,
+    paddingVertical: 4
+  }
 });
