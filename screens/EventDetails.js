@@ -2,11 +2,10 @@ import * as React from 'react';
 import { StyleSheet, Text, ScrollView, View, Image, TouchableOpacity, AsyncStorage } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import SessionContext from './../context/session.context';
-import MapView, { Marker } from 'react-native-maps';
 import MapComponent from './../components/mapComponent';
 import TextComponent from '../components/inputs/TextComponent';
 import ButtonComponent from '../components/inputs/ButtonComponent';
-import serviceHelper from '../helpers/service_helper';
+import { staticText } from '../constants/static';
 
 export default function EventDetailsScreen({ route, navigation }) {
 
@@ -71,11 +70,11 @@ export default function EventDetailsScreen({ route, navigation }) {
                                 <View style={styles.footer}>
                                     <TouchableOpacity onPress={() => { navigation.navigate('Event', { event: event }) }}>
                                         <ButtonComponent
-                                            value={'Edit event'} main={true} />
+                                            value={staticText.edit} main={true} />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => { removeEvent(event) }}>
                                         <ButtonComponent
-                                            value={'Remove event'} main={true} />
+                                            value={staticText.remove} main={true} />
                                     </TouchableOpacity>
                                 </View> :
                                 null

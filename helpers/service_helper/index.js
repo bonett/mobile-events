@@ -1,5 +1,4 @@
 import { settings } from '../../constants/settings';
-import { AsyncStorage } from 'react-native';
 
 const serviceHelper = {
 
@@ -53,7 +52,7 @@ const serviceHelper = {
         data.append('upload_preset', 'dhk2sbwpg')
         data.append("cloud_name", "dhk2sbwpg")
 
-        const response = await fetch(`https://api.cloudinary.com/v1_1/dhk2sbwpg/upload`, {
+        const response = await fetch(settings.storageUrl, {
             method: "POST",
             body: data
         }),
@@ -64,9 +63,9 @@ const serviceHelper = {
     },
     getUrlCreateEvent: function (status) {
         if (status === null) {
-            return { url: 'http://localhost:8080/events', method: 'POST' };
+            return { url: `${settings.urlApi}events`, method: 'POST' };
         } else {
-            return { url: `http://localhost:8080/events/${status.id_event}`, method: 'PUT' }
+            return { url: `${settings.urlApi}events/${status.id_event}`, method: 'PUT' }
         }
     }
 }

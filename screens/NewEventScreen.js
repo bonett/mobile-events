@@ -96,10 +96,8 @@ export default function NewEventScreen({ route, navigation }) {
     const cloudStorage = async (userId) => {
 
         const savedImage = await serviceHelper.saveImageOnStorage(responseStorage);
-        console.log(savedImage)
-        if (savedImage) {
-            await registerEvent(userId, savedImage.url);
-        }
+
+        if (savedImage) await registerEvent(userId, savedImage.url);
 
     }
 
@@ -173,12 +171,17 @@ export default function NewEventScreen({ route, navigation }) {
                                 </View>
                             </View>
                         </ScrollView>
-                        <View style={styles.footer}>
-                            <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
-                                <ButtonComponent
-                                    value={'save'} main={true} />
-                            </TouchableOpacity>
-                        </View>
+                        {
+                            !loader ? <View style={styles.footer}>
+                                <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
+                                    {
+                                        route.params.event !== null ? <ButtonComponent
+                                            value={staticText.update} main={true} /> : <ButtonComponent
+                                                value={staticText.save} main={true} />
+                                    }
+                                </TouchableOpacity>
+                            </View> : null
+                        }
                     </View>
                 )}
         </SessionContext.Consumer>
@@ -197,13 +200,17 @@ const styles = StyleSheet.create({
         width: wp('100%'),
         paddingHorizontal: 20
     },
+    formGroup: {
+        marginVertical: 4,
+        paddingVertical: 4
+    },
     body: {
         flex: 8,
         justifyContent: 'center',
         width: wp('90%'),
     },
     footer: {
-        flex: 1,
+        flex: 10,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
