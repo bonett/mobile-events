@@ -23,7 +23,7 @@ export default function EventDetailsScreen({ route, navigation }) {
         const id_event = event && event.id_event;
         const token = await AsyncStorage.getItem('TOKEN') || 'none';
 
-        const response = await fetch(`${settings}/events/${id_event}`, {
+        const response = await fetch(`${settings.urlApi}/events/${id_event}`, {
             method: "DELETE",
             headers: new Headers({
                 'Content-Type': 'application/json',

@@ -36,7 +36,13 @@ export default function SignUpScreen({ navigation }) {
       const hashPassword = hashHelper.hiddenPassword(password),
         payload = serviceHelper.signUpPayload(username, email, hashPassword);
 
-      const response = await fetch(`${settings.urlApi}/auth/register`, { method: "POST" }),
+      const response = await fetch(`${settings.urlApi}/auth/register`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      }),
         data = await response.json();
 
       console.log(data)
@@ -44,7 +50,7 @@ export default function SignUpScreen({ navigation }) {
       if (data.status === 'OK') {
         navigation.push('Login');
       } else {
-        alertHelper.showAlertMessage(data.message);
+        alertHelper.showAlertMessage(data.mensaje);
       }
     } else {
       alertHelper.showAlertMessage(staticText.valid_email);
