@@ -1,97 +1,115 @@
-import * as WebBrowser from 'expo-web-browser';
-import * as React from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from "react";
+import { StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native';
+import TextInputComponent from '../components/inputs/TextInputComponent';
+import TextComponent from '../components/inputs/TextComponent';
+import ButtonComponent from '../components/inputs/ButtonComponent';
+import { staticText } from '../constants/static';
+import serviceHelper from '../helpers/service_helper';
+import validatorHelper from '../helpers/validator_helper';
+import alertHelper from '../helpers/alert_helper';
+import hashHelper from '../helpers/hash_helper';
 
-import { ScrollView } from 'react-native-gesture-handler';
+export default function SignInScreen({ navigation }) {
 
-export default function SignInScreen() {
+  const [email, onChangeEmail] = useState('wilfrido@gmail.com');
+  const [password, onChangePassword] = useState('12345678');
+
+  const getEmail = (value) => {
+    onChangeEmail(value);
+  }
+
+  const getPassword = (value) => {
+    onChangePassword(value);
+  }
+
+  const onSignInUser = async () => {
+
+    const emailValidation = validatorHelper.validateEmailFormat(email);
+
+    if (emailValidation) {
+      try {
+        const hashPassword = hashHelper.hiddenPassword(password),
+          payload = serviceHelper.signInPayload(email, hashPassword),
+          content = serviceHelper.getUrlBase('auth/login', "POST", payload);
+
+        const response = await fetch(content.urlApi, content.headers),
+          data = await response.json();
+
+        if (data.isAuthenticated) {
+          navigation.push('Dashboard', { session: data.id });
+        } else {
+          alertHelper.showAlertMessage(staticText.user_not_authorized);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      alertHelper.showAlertMessage(staticText.valid_email);
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-       
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.formGroup}>
+          <TextComponent
+            value={staticText.sign_in_heading}
+            size={30}
+            weight={"400"} />
+        </View>
+        <View style={styles.formGroup}>
+          <TextComponent
+            value={staticText.sign_in_subheading}
+            size={36}
+            weight={"200"} />
+        </View>
+        <View style={styles.formGroup}>
+          <TextInputComponent
+            value={email}
+            placeholder={'Email'}
+            setValue={getEmail}
+            secureTextEntry={false}
+          />
+        </View>
+        <View style={styles.formGroup}>
+          <TextInputComponent
+            value={password}
+            placeholder={'Password'}
+            setValue={getPassword}
+            secureTextEntry={true}
+          />
+        </View>
+        <View style={styles.formGroup}>
+          <TouchableOpacity onPress={() => { onSignInUser() }}>
+            <ButtonComponent
+              value={staticText.continue} main={true} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.formGroup}>
+          <TouchableOpacity onPress={() => { navigation.push('Register') }}>
+            <ButtonComponent
+              value={staticText.dont_have_account} main={false} />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
 }
 
-SignInScreen.navigationOptions = {
-  header: null,
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fafafa',
+    paddingVertical: 40
   },
-  contentContainer: {
-    paddingTop: 30,
+  scrollContainer: {
+    flex: 1,
+    paddingTop: 40,
+    paddingStart: 20,
+    paddingEnd: 20,
   },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
+  formGroup: {
+    marginVertical: 4,
+    paddingVertical: 4
+  }
 });
