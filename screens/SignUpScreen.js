@@ -1,40 +1,41 @@
-import * as React from 'react';
+import React from 'react';
 import { StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native';
 import TextInputComponent from '../components/inputs/TextInputComponent';
 import TextComponent from '../components/inputs/TextComponent';
 import ButtonComponent from '../components/inputs/ButtonComponent';
-import helpers from './../helpers/validations';
+import serviceHelper from '../helpers/service_helper';
+import validatorHelper from '../helpers/validator_helper';
+import alertHelper from '../helpers/alert_helper';
 
 export default function SignUpScreen({ navigation }) {
 
-  const [username, onChangeUserName] = React.useState('');
-  const [email, onChangeEmail] = React.useState('');
-  const [password, onChangePassword] = React.useState('');
+  const [username, onChangeUserName] = useState('');
+  const [email, onChangeEmail] = useState('');
+  const [password, onChangePassword] = useState('');
 
-  const registerUser = () => {
+  const onRegisterUser = async () => {
 
-    const payload = {
-      username: username,
-      email: email,
-      password: password
-    };
+    const emailValidation = validatorHelper.validateEmailFormat(email);
 
-    fetch(`http://localhost:8080/auth/register`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      })
-    })
-      .then(res => res.json())
-      .then(response => {
-        if (response.status === 'OK') {
+    if (emailValidation) {
+      try {
+        const payload = serviceHelper.signUpPayload(username, email, password),
+          content = serviceHelper.getUrlBase('auth/register', "POST", payload);
+
+        await fetch(content.urlApi, content.headers),
+          data = await response.json();
+
+        if (data.status === 'OK') {
           navigation.push('Login');
         } else {
-          alert(response.message);
+          alertHelper.showAlertMessage(response.message);
         }
-      })
-      .catch(error => console.log(error));
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      alertHelper.showAlertMessage(staticText.valid_email);
+    }
   }
 
   const getUsername = (value) => {
@@ -51,9 +52,9 @@ export default function SignUpScreen({ navigation }) {
 
   const _userSignUp = () => {
 
-    const emailValidation = helpers.validateEmail(email);
+    const emailValidation = validatorHelper.validateEmailFormat(email);
 
-    if(emailValidation) {
+    if (emailValidation) {
       navigation.push('Login');
     } else {
       alert('Please enter a valid email');
@@ -100,7 +101,7 @@ export default function SignUpScreen({ navigation }) {
           />
         </View>
         <View style={styles.formGroup}>
-          <TouchableOpacity onPress={() => { _userSignUp() }}>
+          <TouchableOpacity onPress={() => { onRegisterUser() }}>
             <ButtonComponent
               value={'Continue'} main={true} />
           </TouchableOpacity>

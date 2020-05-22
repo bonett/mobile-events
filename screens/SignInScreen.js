@@ -3,40 +3,38 @@ import { StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native';
 import TextInputComponent from '../components/inputs/TextInputComponent';
 import TextComponent from '../components/inputs/TextComponent';
 import ButtonComponent from '../components/inputs/ButtonComponent';
-import helpers from './../helpers/validations';
-
+import { staticText } from '../constants/static';
+import serviceHelper from '../helpers/service_helper';
+import validatorHelper from '../helpers/validator_helper';
+import alertHelper from '../helpers/alert_helper';
 
 export default function SignInScreen({ navigation }) {
 
-  const [email, onChangeEmail] = useState('wilfrido@gmail.com');
-  const [password, onChangePassword] = useState('123456');
+  const [email, onChangeEmail] = useState('');
+  const [password, onChangePassword] = useState('');
 
-  const _userSignIn = async () => {
+  const onSignInUser = async () => {
 
-    const emailValidation = helpers.validateEmail(email);
+    const emailValidation = validatorHelper.validateEmailFormat(email);
 
     if (emailValidation) {
-      const payload = {
-        email: email,
-        password: password
-      };
+      try {
+        const payload = serviceHelper.signInPayload(email, password),
+          content = serviceHelper.getUrlBase('auth/login', "POST", payload);
 
-      const response = await fetch(`http://localhost:8080/auth/login`, {
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: new Headers({
-          'Content-Type': 'application/json'
-        })
-      }),
-        data = await response.json();
+        await fetch(content.urlApi, content.headers),
+          data = await response.json();
 
-      if (data.isAuthenticated) {
-        navigation.push('Dashboard', { session: data.id });
-      } else {
-        alert('You are not authorized')
+        if (data.isAuthenticated) {
+          navigation.push('Dashboard', { session: data.id });
+        } else {
+          alertHelper.showAlertMessage(staticText.user_not_authorized);
+        }
+      } catch (e) {
+        console.error(e);
       }
     } else {
-      alert('Please enter a valid email');
+      alertHelper.showAlertMessage(staticText.valid_email);
     }
   }
 
@@ -53,13 +51,13 @@ export default function SignInScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.formGroup}>
           <TextComponent
-            value={'Hello !'}
+            value={staticText.sign_in_heading}
             size={30}
             weight={"400"} />
         </View>
         <View style={styles.formGroup}>
           <TextComponent
-            value={'Sign in to continue'}
+            value={staticText.sign_in_subheading}
             size={36}
             weight={"200"} />
         </View>
@@ -80,15 +78,15 @@ export default function SignInScreen({ navigation }) {
           />
         </View>
         <View style={styles.formGroup}>
-          <TouchableOpacity onPress={() => { _userSignIn() }}>
+          <TouchableOpacity onPress={() => { onSignInUser() }}>
             <ButtonComponent
-              value={'Continue'} main={true} />
+              value={staticText.continue} main={true} />
           </TouchableOpacity>
         </View>
         <View style={styles.formGroup}>
           <TouchableOpacity onPress={() => { navigation.push('Register') }}>
             <ButtonComponent
-              value={"Don't have account"} main={false} />
+              value={staticText.dont_have_account} main={false} />
           </TouchableOpacity>
         </View>
       </ScrollView>
