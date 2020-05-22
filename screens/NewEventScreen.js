@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, AsyncStorage, Button, Image, Platform } from 'react-native';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import MapView, { Marker } from 'react-native-maps';
 import SessionContext from './../context/session.context';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 export default function NewEventScreen({ route, navigation }) {
 
@@ -24,7 +24,7 @@ export default function NewEventScreen({ route, navigation }) {
             });
 
     const [picture, setPicture] = useState(route.params.event !== null ? route.params.event.picture : null);
-    const [responseStorage, setResponseStorage] = useState(null);
+    const [responseStorage, setResponseStorage] = useState(route.params.event !== null ? route.params.event.picture : null);
 
     useEffect(() => {
 
@@ -77,7 +77,15 @@ export default function NewEventScreen({ route, navigation }) {
     };
 
     const validateDataRegister = async (userId) => {
-        await _cloudStorage(userId);
+        if (route.params.event !== null) {
+            if (responseStorage !== picture) {
+                await _cloudStorage(userId);
+            } else {
+                await registerEvent(userId, picture);
+            }
+        } else {
+            await _cloudStorage(userId);
+        }
     }
 
     const _cloudStorage = async (userId) => {
@@ -100,6 +108,7 @@ export default function NewEventScreen({ route, navigation }) {
 
     const registerEvent = async (userId, storagePicture) => {
 
+        const pathUrl = (route.params.event === null) ? { url: 'http://localhost:8080/events', method: 'POST' } : { url: `http://localhost:8080/events/${route.params.event.id_event}`, method: 'PUT' }
         const payload = {
             title: title,
             description: description,
@@ -111,12 +120,10 @@ export default function NewEventScreen({ route, navigation }) {
             longitude_delta: region.longitudeDelta
         }
 
-        console.log(payload)
-
         const token = await AsyncStorage.getItem('TOKEN') || 'none';
 
-        const response = await fetch(`http://localhost:8080/events`, {
-            method: "POST",
+        const response = await fetch(pathUrl.url, {
+            method: pathUrl.method,
             body: JSON.stringify(payload),
             headers: new Headers({
                 'Content-Type': 'application/json',
@@ -125,7 +132,6 @@ export default function NewEventScreen({ route, navigation }) {
         }),
             data = await response.json();
 
-        console.log(data);
         if (data.status === 'OK') {
             navigation.navigate('Home Events');
         }
@@ -152,7 +158,7 @@ export default function NewEventScreen({ route, navigation }) {
                         <View style={styles.footer}>
                             <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
                                 <View style={styles.buttonContent} >
-                                    <Text style={styles.buttonText}>Create Event</Text>
+                                    <Text style={styles.buttonText}>{route.params.event === null ? 'Create' : 'Update'} Event</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
