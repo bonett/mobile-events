@@ -8,6 +8,7 @@ import serviceHelper from '../helpers/service_helper';
 import validatorHelper from '../helpers/validator_helper';
 import alertHelper from '../helpers/alert_helper';
 import hashHelper from '../helpers/hash_helper';
+import { settings } from '../constants/settings';
 
 export default function SignInScreen({ navigation }) {
 
@@ -27,21 +28,23 @@ export default function SignInScreen({ navigation }) {
     const emailValidation = validatorHelper.validateEmailFormat(email);
 
     if (emailValidation) {
-      try {
-        const hashPassword = hashHelper.hiddenPassword(password),
-          payload = serviceHelper.signInPayload(email, hashPassword),
-          content = serviceHelper.getUrlBase('auth/login', "POST", payload);
 
-        const response = await fetch(content.urlApi, content.headers),
-          data = await response.json();
+      const hashPassword = hashHelper.hiddenPassword(password),
+        payload = serviceHelper.signInPayload(email, hashPassword);
 
-        if (data.isAuthenticated) {
-          navigation.push('Dashboard', { session: data.id });
-        } else {
-          alertHelper.showAlertMessage(staticText.user_not_authorized);
-        }
-      } catch (e) {
-        console.error(e);
+      const response = await fetch(`${settings.urlApi}/auth/login`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      }),
+        data = await response.json();
+
+      if (data.isAuthenticated) {
+        navigation.push('Dashboard');
+      } else {
+        alertHelper.showAlertMessage(data.mensaje);
       }
     } else {
       alertHelper.showAlertMessage(staticText.valid_email);

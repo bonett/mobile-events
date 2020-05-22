@@ -6,6 +6,7 @@ import MapComponent from './../components/mapComponent';
 import TextComponent from '../components/inputs/TextComponent';
 import ButtonComponent from '../components/inputs/ButtonComponent';
 import { staticText } from '../constants/static';
+import { settings } from './../constants/settings';
 
 export default function EventDetailsScreen({ route, navigation }) {
 
@@ -22,7 +23,7 @@ export default function EventDetailsScreen({ route, navigation }) {
         const id_event = event && event.id_event;
         const token = await AsyncStorage.getItem('TOKEN') || 'none';
 
-        const response = await fetch(`http://localhost:8080/events/${id_event}`, {
+        const response = await fetch(`${settings.urlApi}/events/${id_event}`, {
             method: "DELETE",
             headers: new Headers({
                 'Content-Type': 'application/json',

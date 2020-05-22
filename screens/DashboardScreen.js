@@ -5,6 +5,7 @@ import SessionContext from './../context/session.context';
 import HomeScreen from './HomeScreen';
 import EventDetailsScreen from './EventDetails';
 import NewEventScreen from './NewEventScreen';
+import { settings } from '../constants/settings';
 
 const DashboardStack = createStackNavigator();
 
@@ -17,7 +18,7 @@ export default function DashboardScreen({ route, navigation }) {
 
         async function getToken() {
             try {
-                const response = await fetch(`http://localhost:8080/auth/getToken`, { method: "GET" }),
+                const response = await fetch(`${settings.urlApi}/auth/getToken`, { method: "GET" }),
                     data = await response.json(),
                     status = data && data.message,
                     token = data && data.token;
