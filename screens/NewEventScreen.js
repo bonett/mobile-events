@@ -10,9 +10,6 @@ import ButtonComponent from './../components/inputs/ButtonComponent';
 import MapComponent from './../components/mapComponent';
 import utilsHelper from '../helpers/utils_helper';
 import serviceHelper from '../helpers/service_helper';
-import validatorHelper from '../helpers/validator_helper';
-import alertHelper from '../helpers/alert_helper';
-;
 import { staticText } from '../constants/static';
 
 export default function NewEventScreen({ route, navigation }) {
@@ -99,8 +96,8 @@ export default function NewEventScreen({ route, navigation }) {
     const cloudStorage = async (userId) => {
 
         const savedImage = await serviceHelper.saveImageOnStorage(responseStorage);
-
-        if (savedImage.url) {
+        console.log(savedImage)
+        if (savedImage) {
             await registerEvent(userId, savedImage.url);
         }
 
@@ -108,13 +105,13 @@ export default function NewEventScreen({ route, navigation }) {
 
     const registerEvent = async (userId, storagePicture) => {
 
-        const baseRegisterEventUrl = serviceHelper.getUrlCreateEvent(route.params.event),
+        const pathUrl = serviceHelper.getUrlCreateEvent(route.params.event),
             payload = serviceHelper.newEventPayload(title, description, storagePicture, userId, region);
 
         const token = await AsyncStorage.getItem('TOKEN') || 'none';
 
-        const response = await fetch(baseRegisterEventUrl.url, {
-            method: baseRegisterEventUrl.method,
+        const response = await fetch(pathUrl.url, {
+            method: pathUrl.method,
             body: JSON.stringify(payload),
             headers: new Headers({
                 'Content-Type': 'application/json',

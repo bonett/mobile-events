@@ -59,9 +59,11 @@ const serviceHelper = {
         }),
 
             res = await response.json();
+
+        return res;
     },
-    getUrlCreateEvent: function(status) {
-        if(status === null){
+    getUrlCreateEvent: function (status) {
+        if (status === null) {
             return { url: 'http://localhost:8080/events', method: 'POST' };
         } else {
             return { url: `http://localhost:8080/events/${status.id_event}`, method: 'PUT' }
