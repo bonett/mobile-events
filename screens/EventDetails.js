@@ -3,10 +3,20 @@ import { StyleSheet, Text, ScrollView, View, Image, TouchableOpacity, AsyncStora
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import SessionContext from './../context/session.context';
 import MapView, { Marker } from 'react-native-maps';
+import MapComponent from './../components/mapComponent';
+import TextComponent from '../components/inputs/TextComponent';
+import ButtonComponent from '../components/inputs/ButtonComponent';
+import serviceHelper from '../helpers/service_helper';
 
 export default function EventDetailsScreen({ route, navigation }) {
 
-    const { event } = route.params;
+    const { event } = route.params,
+        region = {
+            latitude: parseFloat(event.latitude),
+            longitude: parseFloat(event.longitude),
+            latitudeDelta: parseFloat(event.latitude_delta),
+            longitudeDelta: parseFloat(event.longitude_delta)
+        };
 
     const removeEvent = async (event) => {
 
@@ -27,37 +37,45 @@ export default function EventDetailsScreen({ route, navigation }) {
         }
     }
 
+    const onRegionChange = (region) => { }
+
     return (
         <SessionContext.Consumer>
             {
                 value => (
                     <View style={styles.container}>
-                        <View style={styles.body}>
-                            <ScrollView contentContainerStyle={styles.contentContainer}>
-                                <Text style={styles.title}>{event.title}</Text>
-                                <Text style={styles.description}>{event.description}</Text>
+                        <ScrollView contentContainerStyle={styles.contentContainer}>
+                            <View style={styles.body}>
+                                <View style={styles.formGroup}>
+                                    <TextComponent
+                                        value={event.title}
+                                        size={34}
+                                        weight={"700"} />
+                                </View>
+                                <View style={styles.formGroup}>
+                                    <TextComponent
+                                        value={event.description}
+                                        size={20}
+                                        weight={"300"} />
+                                </View>
                                 <View style={styles.media}>
                                     <Image source={{ uri: event.picture }} style={styles.itemPicture} />
                                 </View>
-                                <View style={styles.mapContainer}>
-                                    <MapView style={styles.map} initialRegion={{ latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude), latitudeDelta: parseFloat(event.latitude_delta), longitudeDelta: parseFloat(event.longitude_delta) }}>
-                                        <Marker coordinate={{ latitude: parseFloat(event.latitude), longitude: parseFloat(event.longitude) }} title={event.title} />
-                                    </MapView>
+                                <View style={styles.formGroup}>
+                                    <MapComponent region={region} getRegion={onRegionChange} />
                                 </View>
-                            </ScrollView>
-                        </View>
+                            </View>
+                        </ScrollView>
                         {
                             value === event.id_user ?
                                 <View style={styles.footer}>
                                     <TouchableOpacity onPress={() => { navigation.navigate('Event', { event: event }) }}>
-                                        <View style={styles.buttonContent} >
-                                            <Text style={styles.buttonText}>Edit Event</Text>
-                                        </View>
+                                        <ButtonComponent
+                                            value={'Edit event'} main={true} />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => { removeEvent(event) }}>
-                                        <View style={styles.buttonContent} >
-                                            <Text style={styles.buttonText}>Remove Event</Text>
-                                        </View>
+                                        <ButtonComponent
+                                            value={'Remove event'} main={true} />
                                     </TouchableOpacity>
                                 </View> :
                                 null
@@ -75,46 +93,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
     },
+    contentContainer: {
+        paddingVertical: 10,
+        width: wp('100%'),
+        paddingHorizontal: 20
+    },
     body: {
         flex: 8,
         justifyContent: 'center'
     },
     footer: {
-        flex: 1,
+        flex: 5,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         alignItems: 'center',
         backgroundColor: "#2433AC",
-    },
-    buttonContent: {
-        width: wp('50%'),
-        backgroundColor: "#2433AC",
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '400',
-        textTransform: "uppercase"
-    },
-    contentContainer: {
-        paddingVertical: 10,
         width: wp('100%'),
-        paddingHorizontal: 26
     },
-    title: {
-        fontSize: 30,
-        fontWeight: "800",
+    formGroup: {
         marginVertical: 4,
         paddingVertical: 4
-    },
-    description: {
-        fontSize: 16,
-        fontWeight: "300",
-        marginVertical: 4,
-        paddingVertical: 4,
-        textAlign: "justify"
     },
     media: {
         height: 160,
@@ -122,13 +120,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginVertical: 10,
         paddingVertical: 10
-    },
-    mapContainer: {
-        marginVertical: 20,
-        height: 200
-    },
-    map: {
-        height: 200
     },
     itemPicture: {
         marginTop: 10,

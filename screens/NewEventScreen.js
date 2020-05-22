@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, AsyncStorage, Button, Image, Platform } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, ScrollView, AsyncStorage, Button, Image, Platform } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import SessionContext from './../context/session.context';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,6 +9,10 @@ import TextInputComponent from './../components/inputs/TextInputComponent';
 import ButtonComponent from './../components/inputs/ButtonComponent';
 import MapComponent from './../components/mapComponent';
 import utilsHelper from '../helpers/utils_helper';
+import serviceHelper from '../helpers/service_helper';
+import validatorHelper from '../helpers/validator_helper';
+import alertHelper from '../helpers/alert_helper';
+;
 import { staticText } from '../constants/static';
 
 export default function NewEventScreen({ route, navigation }) {
@@ -112,17 +116,8 @@ export default function NewEventScreen({ route, navigation }) {
 
     const registerEvent = async (userId, storagePicture) => {
 
-        const pathUrl = (route.params.event === null) ? { url: 'http://localhost:8080/events', method: 'POST' } : { url: `http://localhost:8080/events/${route.params.event.id_event}`, method: 'PUT' }
-        const payload = {
-            title: title,
-            description: description,
-            picture: storagePicture,
-            id_user: userId,
-            latitude: region.latitude,
-            longitude: region.longitude,
-            latitude_delta: region.latitudeDelta,
-            longitude_delta: region.longitudeDelta
-        }
+        const pathUrl = (route.params.event === null) ? { url: 'http://localhost:8080/events', method: 'POST' } : { url: `http://localhost:8080/events/${route.params.event.id_event}`, method: 'PUT' },
+            payload = serviceHelper.newEventPayload(title, description, storagePicture, userId, region);
 
         const token = await AsyncStorage.getItem('TOKEN') || 'none';
 
@@ -157,43 +152,44 @@ export default function NewEventScreen({ route, navigation }) {
             {
                 value => (
                     <View style={styles.container}>
-
-                        <View style={styles.body}>
-                            <View style={styles.attach}>
-                                <Image source={{ uri: picture ? picture : staticText.default_image }} style={styles.image} />
-                                <Button title={staticText.choose_image} onPress={() => _pickImage()} />
+                        <ScrollView contentContainerStyle={styles.contentContainer}>
+                            <View style={styles.body}>
+                                <View style={styles.attach}>
+                                    <Image source={{ uri: picture ? picture : staticText.default_image }} style={styles.image} />
+                                    <Button title={staticText.choose_image} onPress={() => _pickImage()} />
+                                </View>
+                                <View style={styles.formGroup}>
+                                    <TextInputComponent
+                                        value={title}
+                                        placeholder={'Title'}
+                                        setValue={getTitleEvent}
+                                        secureTextEntry={false}
+                                    />
+                                </View>
+                                <View style={styles.formGroup}>
+                                    <TextInputComponent
+                                        value={description}
+                                        placeholder={'Description'}
+                                        setValue={getDescriptionEvent}
+                                        secureTextEntry={false}
+                                    />
+                                </View>
+                                <View style={styles.formGroup}>
+                                    <MapComponent region={region} getRegion={onRegionChange} />
+                                </View>
+                                <View style={styles.formGroup}>
+                                    {
+                                        loader ? <LoaderComponent show={loader} /> : null
+                                    }
+                                </View>
                             </View>
-                            <View style={styles.formGroup}>
-                                <TextInputComponent
-                                    value={title}
-                                    placeholder={'Title'}
-                                    setValue={getTitleEvent}
-                                    secureTextEntry={false}
-                                />
-                            </View>
-                            <View style={styles.formGroup}>
-                                <TextInputComponent
-                                    value={description}
-                                    placeholder={'Description'}
-                                    setValue={getDescriptionEvent}
-                                    secureTextEntry={false}
-                                />
-                            </View>
-                            <View style={styles.formGroup}>
-                                <MapComponent region={region} getRegion={onRegionChange} />
-                            </View>
-                            <View style={styles.formGroup}>
-                                {
-                                    loader ? <LoaderComponent show={loader} /> : null
-                                }
-                            </View>
-                        </View>
+                        </ScrollView>
                         <View style={styles.footer}>
-                                <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
-                                    <ButtonComponent
-                                        value={'save'} main={true} />
-                                </TouchableOpacity>
-                            </View>
+                            <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
+                                <ButtonComponent
+                                    value={'save'} main={true} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )}
         </SessionContext.Consumer>
@@ -206,6 +202,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fff',
+    },
+    contentContainer: {
+        paddingVertical: 20,
+        width: wp('100%'),
+        paddingHorizontal: 20
     },
     body: {
         flex: 8,

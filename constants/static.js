@@ -6,6 +6,7 @@ export const staticText = {
     sign_in_heading: 'Hello !',
     sign_in_subheading: 'Sign in to continue',
     choose_image: "Choose an image",
-    default_image: 'https://www.shareicon.net/data/128x128/2017/02/05/878222_camera_512x512.png'
+    default_image: 'https://www.shareicon.net/data/128x128/2017/02/05/878222_camera_512x512.png',
+    invalid_form: 'The form has empty fields'
   };
   
