@@ -1,5 +1,5 @@
 import { settings } from '../../constants/settings';
-import { AsyncStorage} from 'react-native';
+import { AsyncStorage } from 'react-native';
 
 const serviceHelper = {
 
@@ -47,6 +47,26 @@ const serviceHelper = {
         }
         return urlBase
     },
+    saveImageOnStorage: async function (image) {
+        const data = new FormData()
+        data.append('file', image)
+        data.append('upload_preset', 'dhk2sbwpg')
+        data.append("cloud_name", "dhk2sbwpg")
+
+        const response = await fetch(`https://api.cloudinary.com/v1_1/dhk2sbwpg/upload`, {
+            method: "POST",
+            body: data
+        }),
+
+            res = await response.json();
+    },
+    getUrlCreateEvent: function(status) {
+        if(status === null){
+            return { url: 'http://localhost:8080/events', method: 'POST' };
+        } else {
+            return { url: `http://localhost:8080/events/${status.id_event}`, method: 'PUT' }
+        }
+    }
 }
 
 export default serviceHelper;

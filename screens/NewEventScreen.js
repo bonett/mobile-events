@@ -108,13 +108,13 @@ export default function NewEventScreen({ route, navigation }) {
 
     const registerEvent = async (userId, storagePicture) => {
 
-        const pathUrl = (route.params.event === null) ? { url: 'http://localhost:8080/events', method: 'POST' } : { url: `http://localhost:8080/events/${route.params.event.id_event}`, method: 'PUT' },
+        const baseRegisterEventUrl = serviceHelper.getUrlCreateEvent(route.params.event),
             payload = serviceHelper.newEventPayload(title, description, storagePicture, userId, region);
 
         const token = await AsyncStorage.getItem('TOKEN') || 'none';
 
-        const response = await fetch(pathUrl.url, {
-            method: pathUrl.method,
+        const response = await fetch(baseRegisterEventUrl.url, {
+            method: baseRegisterEventUrl.method,
             body: JSON.stringify(payload),
             headers: new Headers({
                 'Content-Type': 'application/json',
