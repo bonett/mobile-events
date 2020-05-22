@@ -7,6 +7,8 @@ import serviceHelper from '../helpers/service_helper';
 import validatorHelper from '../helpers/validator_helper';
 import alertHelper from '../helpers/alert_helper';
 import hashHelper from '../helpers/hash_helper';
+import { staticText } from '../constants/static';
+import { settings } from '../constants/settings';
 
 export default function SignUpScreen({ navigation }) {
 
@@ -32,11 +34,12 @@ export default function SignUpScreen({ navigation }) {
 
     if (emailValidation) {
       const hashPassword = hashHelper.hiddenPassword(password),
-        payload = serviceHelper.signUpPayload(username, email, hashPassword),
-        content = serviceHelper.getUrlBase('auth/register', "POST", payload);
+        payload = serviceHelper.signUpPayload(username, email, hashPassword);
 
-      const response = await fetch(content.urlApi, content.headers),
+      const response = await fetch(`${settings.urlApi}/auth/register`, { method: "POST" }),
         data = await response.json();
+
+      console.log(data)
 
       if (data.status === 'OK') {
         navigation.push('Login');

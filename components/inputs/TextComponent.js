@@ -6,7 +6,7 @@ const TextComponent = (props) => {
     const { value, size, weight } = props;
 
     return (
-        <Text style={{ fontSize: `${size}`, fontWeight: `${weight}` }}>{value}</Text>
+        <Text style={{ fontSize: size, fontWeight: weight }}>{value}</Text>
     )
 }
 

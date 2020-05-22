@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, FlatList, View, TouchableOpacity, AsyncStorage } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import ItemComponent from '../components/itemComponent';
+import {settings} from './../constants/settings';
 
 export default function HomeScreen({ navigation }) {
 
@@ -12,7 +13,7 @@ export default function HomeScreen({ navigation }) {
         async function getEvents() {
             try {
                 const token = await AsyncStorage.getItem('TOKEN') || 'none';
-                const response = await fetch(`http://localhost:8080/events`, {
+                const response = await fetch(`${settings.urlApi}/events`, {
                     method: "GET", headers: new Headers({
                         'Content-Type': 'application/json',
                         'access-token': token
