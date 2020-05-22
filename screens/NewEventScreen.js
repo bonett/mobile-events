@@ -6,13 +6,9 @@ import SessionContext from './../context/session.context';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import LoaderComponent from './../components/loaderComponent';
-
-const INITIAL_REGION = {
-    latitude: 0,
-    longitude: 0,
-    latitudeDelta: 0,
-    longitudeDelta: 0
-};
+import TextInputComponent from './../components/inputs/TextInputComponent';
+import MapComponent from './../components/mapComponent';
+import utilsHelper from '../helpers/utils_helper';
 
 export default function NewEventScreen({ route, navigation }) {
 
@@ -27,7 +23,7 @@ export default function NewEventScreen({ route, navigation }) {
                 longitude: parseFloat(route.params.event.longitude),
                 latitudeDelta: parseFloat(route.params.event.latitude_delta),
                 longitudeDelta: parseFloat(route.params.event.longitude_delta)
-            } : INITIAL_REGION);
+            } : utilsHelper.getDefaultLocationMap());
 
     useEffect(() => {
 
@@ -147,37 +143,55 @@ export default function NewEventScreen({ route, navigation }) {
         }
     }
 
+    const getTitleEvent = (value) => {
+        onChangeTitle(value);
+    }
+
+    const getDescriptionEvent = (value) => {
+        onChangeDescription(value);
+    }
+
     return (
         <SessionContext.Consumer>
             {
                 value => (
                     <View style={styles.container}>
-                        {
-                            loader ? <LoaderComponent show={loader} />
-                                :
-                                <>
-                                    <View style={styles.body}>
-                                        <View style={styles.attach}>
-                                            <Image source={{ uri: picture ? picture : 'https://www.shareicon.net/data/128x128/2017/02/05/878222_camera_512x512.png' }} style={styles.image} />
-                                            <Button title="Choose an image" onPress={() => _pickImage()} />
-                                        </View>
-                                        <TextInput placeholder='Title' style={styles.inputText} onChangeText={title => onChangeTitle(title)} value={title} autoCapitalize="none" />
-                                        <TextInput placeholder='Description' style={styles.inputText} onChangeText={description => onChangeDescription(description)} value={description} autoCapitalize="none" />
-                                        <View style={styles.mapContainer}>
-                                            <MapView style={styles.map} region={region} onRegionChange={onRegionChange}>
-                                                <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
-                                            </MapView>
-                                        </View>
-                                    </View>
-                                    <View style={styles.footer}>
-                                        <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
-                                            <View style={styles.buttonContent} >
-                                                <Text style={styles.buttonText}>{route.params.event === null ? 'Create' : 'Update'} Event</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                </>
-                        }
+
+                        <View style={styles.body}>
+                            <View style={styles.attach}>
+                                <Image source={{ uri: picture ? picture : 'https://www.shareicon.net/data/128x128/2017/02/05/878222_camera_512x512.png' }} style={styles.image} />
+                                <Button title="Choose an image" onPress={() => _pickImage()} />
+                            </View>
+                            <View style={styles.formGroup}>
+                                <TextInputComponent
+                                    value={title}
+                                    placeholder={'Title'}
+                                    setValue={getTitleEvent}
+                                    secureTextEntry={false}
+                                />
+                            </View>
+                            <View style={styles.formGroup}>
+                                <TextInputComponent
+                                    value={description}
+                                    placeholder={'Description'}
+                                    setValue={getDescriptionEvent}
+                                    secureTextEntry={false}
+                                />
+                            </View>
+                            <View style={styles.formGroup}>
+                                <MapComponent region={region} getRegion={onRegionChange} />
+                            </View>
+                            {
+                                loader ? <LoaderComponent show={loader} /> : null
+                            }
+                        </View>
+                        <View style={styles.footer}>
+                            <TouchableOpacity disabled={loader} onPress={() => { validateDataRegister(value) }}>
+                                <View style={styles.buttonContent} >
+                                    <Text style={styles.buttonText}>{route.params.event === null ? 'Create' : 'Update'} Event</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )}
         </SessionContext.Consumer>
