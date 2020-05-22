@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, AsyncStorage, Button, Image, Platform } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import MapView, { Marker } from 'react-native-maps';
 import SessionContext from './../context/session.context';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import LoaderComponent from './../components/loaderComponent';
 import TextInputComponent from './../components/inputs/TextInputComponent';
+import ButtonComponent from './../components/inputs/ButtonComponent';
 import MapComponent from './../components/mapComponent';
 import utilsHelper from '../helpers/utils_helper';
+import { staticText } from '../constants/static';
 
 export default function NewEventScreen({ route, navigation }) {
 
@@ -159,8 +160,8 @@ export default function NewEventScreen({ route, navigation }) {
 
                         <View style={styles.body}>
                             <View style={styles.attach}>
-                                <Image source={{ uri: picture ? picture : 'https://www.shareicon.net/data/128x128/2017/02/05/878222_camera_512x512.png' }} style={styles.image} />
-                                <Button title="Choose an image" onPress={() => _pickImage()} />
+                                <Image source={{ uri: picture ? picture : staticText.default_image }} style={styles.image} />
+                                <Button title={staticText.choose_image} onPress={() => _pickImage()} />
                             </View>
                             <View style={styles.formGroup}>
                                 <TextInputComponent
@@ -181,17 +182,18 @@ export default function NewEventScreen({ route, navigation }) {
                             <View style={styles.formGroup}>
                                 <MapComponent region={region} getRegion={onRegionChange} />
                             </View>
-                            {
-                                loader ? <LoaderComponent show={loader} /> : null
-                            }
+                            <View style={styles.formGroup}>
+                                {
+                                    loader ? <LoaderComponent show={loader} /> : null
+                                }
+                            </View>
                         </View>
                         <View style={styles.footer}>
-                            <TouchableOpacity disabled={loader} onPress={() => { validateDataRegister(value) }}>
-                                <View style={styles.buttonContent} >
-                                    <Text style={styles.buttonText}>{route.params.event === null ? 'Create' : 'Update'} Event</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                                <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
+                                    <ButtonComponent
+                                        value={'save'} main={true} />
+                                </TouchableOpacity>
+                            </View>
                     </View>
                 )}
         </SessionContext.Consumer>
@@ -207,25 +209,16 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 8,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        width: wp('90%'),
     },
     footer: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: "#2433AC"
-    },
-    buttonContent: {
+        backgroundColor: "#2433AC",
         width: wp('100%'),
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '400',
-        textTransform: "uppercase"
     },
     attach: {
         justifyContent: 'center',
@@ -236,40 +229,5 @@ const styles = StyleSheet.create({
         height: 80,
         borderRadius: 100,
         opacity: 0.6
-    },
-    mapContainer: {
-        marginVertical: 20,
-        height: 200,
-    },
-    map: {
-        height: 200
-    },
-    inputText: {
-        height: 48,
-        width: wp('90%'),
-        marginVertical: 8,
-        borderWidth: 1,
-        borderColor: "#ededed",
-        borderRadius: 4,
-        color: "#20232a",
-        fontSize: 20,
-        fontWeight: "300",
-        paddingStart: 8,
-        paddingEnd: 8,
-    },
-    bottomView: {
-        width: '100%',
-        height: 60,
-        backgroundColor: "#2433AC",
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'absolute',
-        bottom: 0,
-    },
-    textStyle: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: '400',
-        textTransform: "uppercase"
     }
 });
