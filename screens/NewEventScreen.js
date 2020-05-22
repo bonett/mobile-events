@@ -5,26 +5,30 @@ import MapView, { Marker } from 'react-native-maps';
 import SessionContext from './../context/session.context';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
+import LoaderComponent from './../components/loaderComponent';
+
+const INITIAL_REGION = {
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0,
+    longitudeDelta: 0
+};
 
 export default function NewEventScreen({ route, navigation }) {
 
     const [title, onChangeTitle] = useState(route.params.event !== null ? route.params.event.title : null);
     const [description, onChangeDescription] = useState(route.params.event !== null ? route.params.event.description : null);
+    const [picture, setPicture] = useState(route.params.event !== null ? route.params.event.picture : null);
+    const [responseStorage, setResponseStorage] = useState(route.params.event !== null ? route.params.event.picture : null);
     const [region, setRegion] = useState(
         route.params.event !== null ? {
             latitude: parseFloat(route.params.event.latitude),
             longitude: parseFloat(route.params.event.longitude),
             latitudeDelta: parseFloat(route.params.event.latitude_delta),
             longitudeDelta: parseFloat(route.params.event.longitude_delta)
-        } : {
-                latitude: 0,
-                longitude: 0,
-                latitudeDelta: 0,
-                longitudeDelta: 0
-            });
+        } : INITIAL_REGION);
 
-    const [picture, setPicture] = useState(route.params.event !== null ? route.params.event.picture : null);
-    const [responseStorage, setResponseStorage] = useState(route.params.event !== null ? route.params.event.picture : null);
+    const [loader, setLoader] = useState(false);
 
     useEffect(() => {
 
@@ -77,6 +81,9 @@ export default function NewEventScreen({ route, navigation }) {
     };
 
     const validateDataRegister = async (userId) => {
+
+        setLoader(true);
+
         if (route.params.event !== null) {
             if (responseStorage !== picture) {
                 await _cloudStorage(userId);
@@ -133,7 +140,10 @@ export default function NewEventScreen({ route, navigation }) {
             data = await response.json();
 
         if (data.status === 'OK') {
-            navigation.navigate('Home Events');
+            setTimeout(() => {
+                setLoader(false);
+                navigation.navigate('Home Events');
+            }, 1000)
         }
     }
 
@@ -142,26 +152,32 @@ export default function NewEventScreen({ route, navigation }) {
             {
                 value => (
                     <View style={styles.container}>
-                        <View style={styles.body}>
-                            <View style={styles.attach}>
-                                <Image source={{ uri: picture ? picture : 'https://www.shareicon.net/data/128x128/2017/02/05/878222_camera_512x512.png' }} style={styles.image} />
-                                <Button title="Choose an image" onPress={() => _pickImage()} />
-                            </View>
-                            <TextInput placeholder='Title' style={styles.inputText} onChangeText={title => onChangeTitle(title)} value={title} autoCapitalize="none" />
-                            <TextInput placeholder='Description' style={styles.inputText} onChangeText={description => onChangeDescription(description)} value={description} autoCapitalize="none" />
-                            <View style={styles.mapContainer}>
-                                <MapView style={styles.map} region={region} onRegionChange={onRegionChange}>
-                                    <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
-                                </MapView>
-                            </View>
-                        </View>
-                        <View style={styles.footer}>
-                            <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
-                                <View style={styles.buttonContent} >
-                                    <Text style={styles.buttonText}>{route.params.event === null ? 'Create' : 'Update'} Event</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                        {
+                            loader ? <LoaderComponent show={loader} />
+                                :
+                                <>
+                                    <View style={styles.body}>
+                                        <View style={styles.attach}>
+                                            <Image source={{ uri: picture ? picture : 'https://www.shareicon.net/data/128x128/2017/02/05/878222_camera_512x512.png' }} style={styles.image} />
+                                            <Button title="Choose an image" onPress={() => _pickImage()} />
+                                        </View>
+                                        <TextInput placeholder='Title' style={styles.inputText} onChangeText={title => onChangeTitle(title)} value={title} autoCapitalize="none" />
+                                        <TextInput placeholder='Description' style={styles.inputText} onChangeText={description => onChangeDescription(description)} value={description} autoCapitalize="none" />
+                                        <View style={styles.mapContainer}>
+                                            <MapView style={styles.map} region={region} onRegionChange={onRegionChange}>
+                                                <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
+                                            </MapView>
+                                        </View>
+                                    </View>
+                                    <View style={styles.footer}>
+                                        <TouchableOpacity onPress={() => { validateDataRegister(value) }}>
+                                            <View style={styles.buttonContent} >
+                                                <Text style={styles.buttonText}>{route.params.event === null ? 'Create' : 'Update'} Event</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                </>
+                        }
                     </View>
                 )}
         </SessionContext.Consumer>
