@@ -7,11 +7,20 @@ import { staticText } from '../constants/static';
 import serviceHelper from '../helpers/service_helper';
 import validatorHelper from '../helpers/validator_helper';
 import alertHelper from '../helpers/alert_helper';
+import hashHelper from '../helpers/hash_helper';
 
 export default function SignInScreen({ navigation }) {
 
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
+
+  const getEmail = (value) => {
+    onChangeEmail(value);
+  }
+
+  const getPassword = (value) => {
+    onChangePassword(value);
+  }
 
   const onSignInUser = async () => {
 
@@ -19,10 +28,11 @@ export default function SignInScreen({ navigation }) {
 
     if (emailValidation) {
       try {
-        const payload = serviceHelper.signInPayload(email, password),
+        const hashPassword = hashHelper.hiddenPassword(password),
+          payload = serviceHelper.signInPayload(email, hashPassword),
           content = serviceHelper.getUrlBase('auth/login', "POST", payload);
 
-        await fetch(content.urlApi, content.headers),
+        const response = await fetch(content.urlApi, content.headers),
           data = await response.json();
 
         if (data.isAuthenticated) {
@@ -36,14 +46,6 @@ export default function SignInScreen({ navigation }) {
     } else {
       alertHelper.showAlertMessage(staticText.valid_email);
     }
-  }
-
-  const getEmail = (value) => {
-    onChangeEmail(value);
-  }
-
-  const getPassword = (value) => {
-    onChangePassword(value);
   }
 
   return (

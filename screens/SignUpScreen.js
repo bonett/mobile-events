@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native';
 import TextInputComponent from '../components/inputs/TextInputComponent';
 import TextComponent from '../components/inputs/TextComponent';
@@ -6,37 +6,13 @@ import ButtonComponent from '../components/inputs/ButtonComponent';
 import serviceHelper from '../helpers/service_helper';
 import validatorHelper from '../helpers/validator_helper';
 import alertHelper from '../helpers/alert_helper';
+import hashHelper from '../helpers/hash_helper';
 
 export default function SignUpScreen({ navigation }) {
 
   const [username, onChangeUserName] = useState('');
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
-
-  const onRegisterUser = async () => {
-
-    const emailValidation = validatorHelper.validateEmailFormat(email);
-
-    if (emailValidation) {
-      try {
-        const payload = serviceHelper.signUpPayload(username, email, password),
-          content = serviceHelper.getUrlBase('auth/register', "POST", payload);
-
-        await fetch(content.urlApi, content.headers),
-          data = await response.json();
-
-        if (data.status === 'OK') {
-          navigation.push('Login');
-        } else {
-          alertHelper.showAlertMessage(response.message);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      alertHelper.showAlertMessage(staticText.valid_email);
-    }
-  }
 
   const getUsername = (value) => {
     onChangeUserName(value);
@@ -50,14 +26,25 @@ export default function SignUpScreen({ navigation }) {
     onChangePassword(value);
   }
 
-  const _userSignUp = () => {
+  const onRegisterUser = async () => {
 
     const emailValidation = validatorHelper.validateEmailFormat(email);
 
     if (emailValidation) {
-      navigation.push('Login');
+      const hashPassword = hashHelper.hiddenPassword(password),
+        payload = serviceHelper.signUpPayload(username, email, hashPassword),
+        content = serviceHelper.getUrlBase('auth/register', "POST", payload);
+
+      const response = await fetch(content.urlApi, content.headers),
+        data = await response.json();
+
+      if (data.status === 'OK') {
+        navigation.push('Login');
+      } else {
+        alertHelper.showAlertMessage(data.message);
+      }
     } else {
-      alert('Please enter a valid email');
+      alertHelper.showAlertMessage(staticText.valid_email);
     }
   }
 
