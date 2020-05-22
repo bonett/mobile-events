@@ -11,8 +11,8 @@ import hashHelper from '../helpers/hash_helper';
 
 export default function SignInScreen({ navigation }) {
 
-  const [email, onChangeEmail] = useState('wilfrido@gmail.com');
-  const [password, onChangePassword] = useState('12345678');
+  const [email, onChangeEmail] = useState('');
+  const [password, onChangePassword] = useState('');
 
   const getEmail = (value) => {
     onChangeEmail(value);
