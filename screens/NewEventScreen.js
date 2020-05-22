@@ -87,30 +87,22 @@ export default function NewEventScreen({ route, navigation }) {
 
         if (route.params.event !== null) {
             if (responseStorage !== picture) {
-                await _cloudStorage(userId);
+                await cloudStorage(userId);
             } else {
                 await registerEvent(userId, picture);
             }
         } else {
-            await _cloudStorage(userId);
+            await cloudStorage(userId);
         }
     }
 
-    const _cloudStorage = async (userId) => {
+    const cloudStorage = async (userId) => {
 
-        const data = new FormData()
-        data.append('file', responseStorage)
-        data.append('upload_preset', 'dhk2sbwpg')
-        data.append("cloud_name", "dhk2sbwpg")
+        const savedImage = await serviceHelper.saveImageOnStorage(responseStorage);
 
-        const response = await fetch(`https://api.cloudinary.com/v1_1/dhk2sbwpg/upload`, {
-            method: "POST",
-            body: data
-        }),
-
-            res = await response.json();
-
-        await registerEvent(userId, res.url);
+        if (savedImage.url) {
+            await registerEvent(userId, savedImage.url);
+        }
 
     }
 
